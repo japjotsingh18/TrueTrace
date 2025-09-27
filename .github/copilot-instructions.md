@@ -1,7 +1,7 @@
 # Use this file to provide workspace-specific custom instructions to Copilot
 # For more details, visit https://code.visualstudio.com/docs/copilot/copilot-customization#_use-a-githubcopilotinstructionsmd-file
 
-This is a Next.js 14 application with TypeScript, Tailwind CSS, and Prisma for a fake news detection platform.
+This is a Next.js 14 application with TypeScript, Tailwind CSS, and Prisma for a misinformation detection platform (TrueTrace).
 
 ## Project Structure
 - `/src/app` - Next.js App Router pages and API routes

@@ -91,7 +91,7 @@ export function Hero() {
 
           {/* Main headline */}
           <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-            <span className="gradient-text">Spot Fake News</span>
+            <span className="gradient-text">Spot Misinformation</span>
             <br />
             <span className="text-white">in Seconds</span>
           </h1>

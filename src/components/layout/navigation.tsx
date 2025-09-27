@@ -37,7 +37,7 @@ export function Navigation() {
               <Shield className="w-6 h-6 text-white" />
             </div>
             <span className="font-bold text-xl gradient-text">
-              FakeNews Detector
+              TrueTrace
             </span>
           </Link>
 

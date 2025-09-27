@@ -9,25 +9,25 @@ import { Toaster } from 'react-hot-toast'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'FakeNews Detector | AI-Powered Fact Checking',
-  description: 'Spot fake news in seconds with advanced AI technology. Verify articles, check sources, and get credibility scores instantly.',
-  keywords: 'fake news, fact check, AI, verification, news analysis, credibility',
-  authors: [{ name: 'FakeNews Detector Team' }],
+  title: 'TrueTrace | AI-Powered Fact Checking',
+  description: 'Spot misinformation in seconds with advanced AI technology. Verify articles, check sources, and get credibility scores instantly.',
+  keywords: 'misinformation, fact check, AI, verification, news analysis, credibility',
+  authors: [{ name: 'TrueTrace Team' }],
   manifest: '/manifest.json',
   icons: {
     icon: '/favicon.svg',
     shortcut: '/favicon.svg',
   },
   openGraph: {
-    title: 'FakeNews Detector | AI-Powered Fact Checking',
-    description: 'Spot fake news in seconds with advanced AI technology',
+    title: 'TrueTrace | AI-Powered Fact Checking',
+  description: 'Spot misinformation in seconds with advanced AI technology',
     type: 'website',
-    url: 'https://fakenews-detector.vercel.app',
+    url: 'https://truetrace.vercel.app',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'FakeNews Detector | AI-Powered Fact Checking',
-    description: 'Spot fake news in seconds with advanced AI technology',
+    title: 'TrueTrace | AI-Powered Fact Checking',
+  description: 'Spot misinformation in seconds with advanced AI technology',
   },
 }
 
