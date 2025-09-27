@@ -1,12 +1,13 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Montserrat } from 'next/font/google'
 import { Providers } from '@/components/providers'
 import { Navigation } from '@/components/layout/navigation'
 import { Footer } from '@/components/layout/footer'
 import { Toaster } from 'react-hot-toast'
 
 const inter = Inter({ subsets: ['latin'] })
+const montserrat = Montserrat({ subsets: ['latin'], weight: ['400', '600', '700'], variable: '--font-heading' })
 
 export const metadata: Metadata = {
   title: 'TrueTrace | AI-Powered Fact Checking',
@@ -37,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className={`dark ${montserrat.variable}`}> 
       <body className={`${inter.className} bg-navy-900 text-white min-h-screen`}>
         <Providers>
           <div className="flex flex-col min-h-screen">

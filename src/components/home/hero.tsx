@@ -90,10 +90,10 @@ export function Hero() {
           </div>
 
           {/* Main headline */}
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-            <span className="gradient-text">Spot Misinformation</span>
+          <h1 className="font-heading text-5xl md:text-7xl font-bold mb-6 leading-tight">
+            <span className="gradient-text font-heading">Spot Misinformation</span>
             <br />
-            <span className="text-white">in Seconds</span>
+            <span className="text-white font-heading">in Seconds</span>
           </h1>
           
           <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-8">
