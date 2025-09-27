@@ -1,0 +1,16 @@
+{
+  "name": "FakeNews Detector",
+  "short_name": "FakeNews",
+  "description": "AI-powered fake news detection and verification platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#06b6d4",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

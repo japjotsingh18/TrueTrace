@@ -1,0 +1,181 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  role          Role      @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts  Account[]
+  sessions  Session[]
+  analyses  Analysis[]
+  reports   Report[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verificationtokens")
+}
+
+model Analysis {
+  id          String        @id @default(cuid())
+  userId      String?
+  inputType   InputType
+  inputText   String?       @db.Text
+  inputUrl    String?
+  inputHash   String        @unique
+  status      AnalysisStatus @default(PENDING)
+  verdict     Verdict?
+  confidence  Float?
+  reasoning   Json?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  user    User?           @relation(fields: [userId], references: [id])
+  steps   AnalysisStep[]
+  sources Source[]
+  reports Report[]
+
+  @@map("analyses")
+}
+
+model AnalysisStep {
+  id         String    @id @default(cuid())
+  analysisId String
+  step       StepType
+  status     StepStatus @default(PENDING)
+  details    Json?
+  startedAt  DateTime  @default(now())
+  finishedAt DateTime?
+
+  analysis Analysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+
+  @@map("analysis_steps")
+}
+
+model Source {
+  id               String  @id @default(cuid())
+  analysisId       String
+  url              String
+  title            String?
+  publisher        String?
+  credibilityScore Float?
+  excerpt          String? @db.Text
+  citation         Json?
+  createdAt        DateTime @default(now())
+
+  analysis Analysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+
+  @@map("sources")
+}
+
+model Report {
+  id         String   @id @default(cuid())
+  analysisId String
+  userId     String?
+  reason     String
+  details    String?  @db.Text
+  status     ReportStatus @default(PENDING)
+  createdAt  DateTime @default(now())
+
+  analysis Analysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  user     User?    @relation(fields: [userId], references: [id])
+
+  @@map("reports")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum InputType {
+  TEXT
+  URL
+  FILE
+}
+
+enum AnalysisStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+}
+
+enum Verdict {
+  TRUE
+  FALSE
+  MIXED
+  UNVERIFIED
+}
+
+enum StepType {
+  CONTENT_EXTRACTION
+  SOURCE_DISCOVERY
+  FACT_CHECKING
+  CREDIBILITY_SCORING
+  VERDICT_GENERATION
+}
+
+enum StepStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  RESOLVED
+}
