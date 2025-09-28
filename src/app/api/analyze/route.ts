@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import crypto from 'crypto'
+import { geminiFactChecker } from '@/lib/gemini'
 
 const analyzeSchema = z.object({
   input: z.string().min(1, 'Input is required'),
@@ -20,13 +21,19 @@ export async function POST(request: NextRequest) {
     // Create content hash for deduplication
     const inputHash = crypto.createHash('sha256').update(input).digest('hex')
 
-    // In a real application, you would:
-    // 1. Store the analysis request in the database
-    // 2. Queue the analysis job
-    // 3. Return the analysis ID for polling
+    // Store analysis in memory for demo (in production, use database)
+    analysisStore[analysisId] = {
+      id: analysisId,
+      status: 'PENDING',
+      input,
+      inputType,
+      createdAt: new Date().toISOString()
+    }
 
-    // Mock response for demonstration
-    const mockResponse = {
+    // Start analysis in background
+    performAnalysis(analysisId, input, inputType)
+
+    const response = {
       analysisId,
       inputHash,
       status: 'PENDING',
@@ -59,7 +66,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    return NextResponse.json(mockResponse, { status: 201 })
+    return NextResponse.json(response, { status: 201 })
 
   } catch (error) {
     console.error('Analysis API error:', error)
@@ -78,6 +85,145 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// In-memory storage for demo (use database in production)
+const analysisStore: Record<string, any> = {}
+
+// Helper function to get step descriptions
+function getStepDescription(stepId: string): string {
+  const descriptions = {
+    'CONTENT_EXTRACTION': 'Parsing and extracting article content',
+    'SOURCE_DISCOVERY': 'Finding related sources and references',
+    'FACT_CHECKING': 'Cross-referencing claims with databases',
+    'CREDIBILITY_SCORING': 'Analyzing source credibility and reputation',
+    'VERDICT_GENERATION': 'Generating final verdict and confidence score'
+  }
+  return descriptions[stepId as keyof typeof descriptions] || 'Processing...'
+}
+
+// Background analysis function
+async function performAnalysis(analysisId: string, input: string, inputType: string) {
+  try {
+    console.log(`Starting analysis for ${analysisId}...`)
+    
+    // Initialize workflow steps
+    const workflowSteps = [
+      'CONTENT_EXTRACTION',
+      'SOURCE_DISCOVERY', 
+      'FACT_CHECKING',
+      'CREDIBILITY_SCORING',
+      'VERDICT_GENERATION'
+    ]
+
+    // Update status to IN_PROGRESS with workflow tracking
+    analysisStore[analysisId] = {
+      ...analysisStore[analysisId],
+      status: 'IN_PROGRESS',
+      currentStep: 'CONTENT_EXTRACTION',
+      workflowSteps: workflowSteps.map(step => ({
+        id: step,
+        status: step === 'CONTENT_EXTRACTION' ? 'IN_PROGRESS' : 'PENDING',
+        startedAt: step === 'CONTENT_EXTRACTION' ? new Date().toISOString() : null,
+        finishedAt: null,
+        description: getStepDescription(step)
+      })),
+      updatedAt: new Date().toISOString()
+    }
+
+    // Progress callback to update workflow status
+    const progressCallback = (stepId: string, description: string) => {
+      const steps = [...analysisStore[analysisId].workflowSteps]
+      const currentStepIndex = steps.findIndex(s => s.id === stepId)
+      
+      if (currentStepIndex !== -1) {
+        // Mark previous steps as completed
+        for (let i = 0; i < currentStepIndex; i++) {
+          if (steps[i].status === 'IN_PROGRESS') {
+            steps[i].status = 'COMPLETED'
+            steps[i].finishedAt = new Date().toISOString()
+          }
+        }
+        
+        // Mark current step as in progress
+        steps[currentStepIndex].status = 'IN_PROGRESS'
+        steps[currentStepIndex].startedAt = new Date().toISOString()
+        steps[currentStepIndex].description = description
+        
+        // Update store
+        analysisStore[analysisId] = {
+          ...analysisStore[analysisId],
+          currentStep: stepId,
+          workflowSteps: steps,
+          updatedAt: new Date().toISOString()
+        }
+      }
+    }
+
+    // Perform Gemini analysis with real-time progress updates
+    const analysisPromise = geminiFactChecker.analyzeContent({
+      content: input,
+      contentType: inputType as 'url' | 'text' | 'file',
+      url: inputType === 'url' ? input : undefined,
+      progressCallback
+    })
+
+    // Set a timeout for the analysis (15 seconds max to allow for all steps)
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Analysis timeout')), 15000)
+    )
+
+    const analysisResult = await Promise.race([analysisPromise, timeoutPromise]) as any
+
+    // Mark all workflow steps as completed
+    const completedSteps = analysisStore[analysisId].workflowSteps.map((step: any) => ({
+      ...step,
+      status: 'COMPLETED',
+      finishedAt: step.finishedAt || new Date().toISOString()
+    }))
+
+    // Store completed analysis
+    analysisStore[analysisId] = {
+      ...analysisStore[analysisId],
+      status: 'COMPLETED',
+      currentStep: 'VERDICT_GENERATION',
+      workflowSteps: completedSteps,
+      verdict: analysisResult.verdict,
+      confidence: analysisResult.confidence,
+      reasoning: analysisResult.reasoning,
+      sources: analysisResult.sources || [],
+      isInvalid: analysisResult.isInvalid || false,
+      invalidReason: analysisResult.invalidReason || '',
+      updatedAt: new Date().toISOString()
+    }
+
+    console.log(`Analysis completed for ${analysisId}:`, analysisResult.verdict, analysisResult.confidence)
+    console.log('Analysis store after completion:', JSON.stringify(analysisStore[analysisId], null, 2))
+    
+  } catch (error) {
+    console.error(`Analysis failed for ${analysisId}:`, error)
+    
+    // Mark current step as failed
+    const failedSteps = (analysisStore[analysisId]?.workflowSteps || []).map((step: any) => {
+      if (step.status === 'IN_PROGRESS') {
+        return {
+          ...step,
+          status: 'FAILED',
+          finishedAt: new Date().toISOString()
+        }
+      }
+      return step
+    })
+    
+    // Store failed analysis
+    analysisStore[analysisId] = {
+      ...analysisStore[analysisId],
+      status: 'FAILED',
+      workflowSteps: failedSteps,
+      error: error instanceof Error ? error.message : 'Analysis failed',
+      updatedAt: new Date().toISOString()
+    }
+  }
+}
+
 // GET method for polling analysis status
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
@@ -90,30 +236,20 @@ export async function GET(request: NextRequest) {
     )
   }
 
-  // In a real application, you would fetch from database
-  // For demo, return mock completed analysis
-  const mockAnalysis = {
-    id: analysisId,
-    status: 'COMPLETED',
-    verdict: 'TRUE',
-    confidence: 0.85,
-    reasoning: {
-      summary: 'Analysis completed successfully',
-      factors: ['Source credibility verified', 'Claims cross-referenced', 'No contradictory evidence found']
-    },
-    sources: [
-      {
-        id: '1',
-        url: 'https://reuters.com/example',
-        title: 'Reuters confirms key facts',
-        publisher: 'Reuters',
-        credibilityScore: 95,
-        excerpt: 'Independent verification of the main claims...'
-      }
-    ],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+  // Get analysis from store
+  const analysis = analysisStore[analysisId]
+  
+  if (!analysis) {
+    console.log(`Analysis not found for ID: ${analysisId}`)
+    console.log('Available analysis IDs:', Object.keys(analysisStore))
+    return NextResponse.json(
+      { error: 'Analysis not found' },
+      { status: 404 }
+    )
   }
 
-  return NextResponse.json(mockAnalysis)
+  // Log the analysis status for debugging
+  console.log(`Returning analysis for ${analysisId}:`, analysis.status)
+
+  return NextResponse.json(analysis)
 }

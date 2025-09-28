@@ -1,97 +1,20 @@
 'use client'
 
-import { useState, useRef } from 'react'
-import { toast } from 'react-hot-toast'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { 
   Search, 
   Shield, 
   Zap, 
-  FileText, 
-  Link as LinkIcon,
-  Upload,
   ArrowRight,
   Sparkles
 } from 'lucide-react'
 
 export function Hero() {
-  const [inputValue, setInputValue] = useState('')
-  const [showTextModal, setShowTextModal] = useState(false)
-  const [textInput, setTextInput] = useState('')
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
-
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (file) {
-      const maxSize = 10 * 1024 * 1024 // 10MB
-      const allowedTypes = ['text/plain', 'application/pdf', 'text/html']
-      if (!allowedTypes.includes(file.type)) {
-        toast.error('Please upload a valid file type (PDF, TXT, or HTML)')
-        return
-      }
-      if (file.size > maxSize) {
-        toast.error('File size must be less than 10MB')
-        return
-      }
-      setSelectedFile(file)
-      handleSubmit('file', file)
-    }
-  }
-
-  const handleSubmit = async (type: 'url' | 'text' | 'file', file?: File) => {
-    setIsSubmitting(true)
-    try {
-      let input = ''
-      let inputType = type
-      if (type === 'url') {
-        input = inputValue.trim()
-        if (!input) {
-          toast.error('Please enter a valid URL')
-          setIsSubmitting(false)
-          return
-        }
-      } else if (type === 'text') {
-        input = textInput.trim()
-        if (!input || input.length < 50) {
-          toast.error('Please enter at least 50 characters of text')
-          setIsSubmitting(false)
-          return
-        }
-      } else if (type === 'file') {
-        if (!file) {
-          toast.error('Please select a file to upload')
-          setIsSubmitting(false)
-          return
-        }
-        input = file.name
-      }
-      const response = await fetch('/api/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          input,
-          inputType,
-          ...(file && { fileName: file.name, fileSize: file.size })
-        })
-      })
-      if (!response.ok) throw new Error('Failed to start analysis')
-      toast.success('Analysis started! Results will appear below.')
-      setInputValue('')
-      setTextInput('')
-      setSelectedFile(null)
-      setShowTextModal(false)
-    } catch (error) {
-      toast.error('Failed to start analysis. Please try again.')
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Overlay for better text readability */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/30 pointer-events-none"></div>
       {/* Animated floating icons - more visible and more icons */}
       <motion.div
         initial={{ y: -40 }}
@@ -194,117 +117,24 @@ export function Hero() {
           </p>
         </motion.div>
 
-        {/* Input options */}
+        {/* Call-to-action button */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="max-w-4xl mx-auto mb-12"
+          className="max-w-md mx-auto mb-12"
         >
-          {/* glass-card container replaced by bordered card below */}
-            <div className="glass-card p-8 rounded-2xl border-2 border-white/20">
-              {/* Tab UI */}
-              <div className="flex justify-center mb-8">
-                <button className="px-6 py-2 border-b-2 border-primary-500 text-white font-semibold focus:outline-none">URL</button>
-                <button className="px-6 py-2 border-b-2 border-transparent text-gray-400 font-semibold focus:outline-none">Upload</button>
-                <button className="px-6 py-2 border-b-2 border-transparent text-gray-400 font-semibold focus:outline-none">Text</button>
-              </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-              {/* Paste URL */}
-              <motion.div
-                whileHover={{ scale: 1.06, rotate: 2 }}
-                whileTap={{ scale: 0.98, rotate: -2 }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.2 }}
-                className="bg-black rounded-xl p-6 cursor-pointer transition-all group border border-white/20"
-              >
-                <LinkIcon className="w-8 h-8 text-primary-500 mb-4 group-hover:scale-110 transition-transform" />
-                <h3 className="font-semibold text-white mb-2">Paste URL</h3>
-                <p className="text-gray-400 text-sm">
-                  Enter a news article link for instant verification
-                </p>
-              </motion.div>
-
-              {/* Upload File */}
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                className="bg-black rounded-xl p-6 cursor-pointer transition-all group border border-white/20"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <Upload className="w-8 h-8 text-accent-500 mb-4 group-hover:scale-110 transition-transform" />
-                <h3 className="font-semibold text-white mb-2">Upload Article</h3>
-                <p className="text-gray-400 text-sm">
-                  Upload PDF or text files for analysis
-                </p>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".pdf,.txt,.html"
-                  onChange={handleFileSelect}
-                  className="hidden"
-                />
-              </motion.div>
-
-              {/* Enter Text */}
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                className="bg-white/5 hover:bg-white/10 border border-white/20 rounded-xl p-6 cursor-pointer transition-all group"
-                onClick={() => setShowTextModal(true)}
-              >
-                <FileText className="w-8 h-8 text-primary-400 mb-4 group-hover:scale-110 transition-transform" />
-                <h3 className="font-semibold text-white mb-2">Enter Text</h3>
-                <p className="text-gray-400 text-sm">
-                  Paste article text directly for fact-checking
-                </p>
-              </motion.div>
-      {/* Modal for text input */}
-      {showTextModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
-          <div className="bg-black border border-white/20 rounded-xl p-8 w-full max-w-lg relative">
-            <button onClick={() => setShowTextModal(false)} className="absolute top-3 right-3 text-gray-400 hover:text-white">✕</button>
-            <h2 className="text-xl font-bold mb-4 text-white">Enter Article Text</h2>
-            <textarea
-              className="w-full h-40 bg-white/5 border border-white/20 rounded-xl p-3 text-white mb-4"
-              placeholder="Paste the article text here..."
-              value={textInput}
-              onChange={e => setTextInput(e.target.value)}
-              minLength={50}
-              maxLength={5000}
-            />
-            <button
-              onClick={() => handleSubmit('text')}
-              disabled={isSubmitting}
-              className="w-full py-3 rounded-xl font-semibold text-lg transition-all duration-300 flex items-center justify-center space-x-2 bg-primary-500 text-white hover:bg-primary-600 disabled:opacity-60"
-            >
-              {isSubmitting ? 'Submitting...' : 'Submit'}
-            </button>
-          </div>
-        </div>
-      )}
-            </div>
-
-            {/* Quick input */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1 relative">
-                <input
-                  type="text"
-                  placeholder="Paste a news URL or enter text to analyze..."
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  className="w-full bg-black rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                />
-                <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-              </div>
-              <Link
-                href={`/analyze${inputValue ? `?input=${encodeURIComponent(inputValue)}` : ''}`}
-                className="bg-black text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center group hover:scale-105 border border-white/10"
-              >
-                Analyze Now
-                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </div>
-          </div>
+          <Link
+            href="/analyze"
+            className="inline-flex items-center justify-center w-full bg-gradient-to-r from-primary-500 to-accent-500 text-white px-12 py-4 rounded-2xl font-bold text-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-primary-500/25 group"
+          >
+            Start Analysis
+            <ArrowRight className="w-6 h-6 ml-3 group-hover:translate-x-2 transition-transform" />
+          </Link>
+          
+          <p className="text-center text-gray-400 text-sm mt-4">
+            Analyze URLs, upload files, or paste text content
+          </p>
         </motion.div>
 
         {/* Stats */}

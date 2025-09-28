@@ -20,20 +20,26 @@ import { format } from '@/lib/date-utils'
 
 interface Analysis {
   id: string
-  verdict: 'TRUE' | 'FALSE' | 'MIXED' | 'UNVERIFIED'
+  verdict: 'TRUE' | 'FALSE' | 'MIXED' | 'UNVERIFIED' | 'INVALID'
   confidence: number
-  reasoning: any
+  reasoning: {
+    summary: string
+    factors: string[]
+    methodology: string
+  }
   sources: Source[]
+  isInvalid?: boolean
+  invalidReason?: string
   createdAt: string
 }
 
 interface Source {
-  id: string
   url: string
   title: string
   publisher: string
   credibilityScore: number
-  excerpt: string
+  supportsClaim: boolean
+  description: string
 }
 
 interface AnalysisResultsProps {
@@ -79,7 +85,18 @@ export function AnalysisResults({ analysis, isLoading, error }: AnalysisResultsP
     return null
   }
 
-  const getVerdictConfig = (verdict: string) => {
+  const getVerdictConfig = (verdict: string, isInvalid?: boolean) => {
+    if (isInvalid || verdict === 'INVALID') {
+      return {
+        icon: XCircle,
+        color: 'text-red-600',
+        bgColor: 'bg-red-600/20',
+        borderColor: 'border-red-600/50',
+        label: 'INVALID CONTENT',
+        description: 'This content contains dangerous misinformation or conspiracy theories'
+      }
+    }
+
     switch (verdict) {
       case 'TRUE':
         return {
@@ -121,36 +138,11 @@ export function AnalysisResults({ analysis, isLoading, error }: AnalysisResultsP
     }
   }
 
-  const verdictConfig = getVerdictConfig(analysis.verdict)
+  const verdictConfig = getVerdictConfig(analysis.verdict, analysis.isInvalid)
   const VerdictIcon = verdictConfig.icon
 
-  // Mock data for demonstration
-  const mockSources = [
-    {
-      id: '1',
-      url: 'https://reuters.com/article/example',
-      title: 'Reuters confirms key facts in the article',
-      publisher: 'Reuters',
-      credibilityScore: 95,
-      excerpt: 'According to our investigation, the main claims presented in the article are supported by official sources...'
-    },
-    {
-      id: '2',
-      url: 'https://apnews.com/article/example',
-      title: 'AP News provides additional context',
-      publisher: 'Associated Press',
-      credibilityScore: 93,
-      excerpt: 'Further analysis reveals that while the core facts are accurate, some context may be missing...'
-    },
-    {
-      id: '3',
-      url: 'https://bbc.com/news/example',
-      title: 'BBC News corroborates timeline',
-      publisher: 'BBC News',
-      credibilityScore: 91,
-      excerpt: 'The timeline of events matches our independent reporting on this subject matter...'
-    }
-  ]
+  // Use real sources from analysis instead of mock data
+  const sources = analysis.sources || []
 
   return (
     <AnimatePresence>
@@ -208,7 +200,7 @@ export function AnalysisResults({ analysis, isLoading, error }: AnalysisResultsP
             </div>
             <div className="text-center">
               <Globe className="w-5 h-5 text-gray-400 mx-auto mb-2" />
-              <div className="text-sm text-white font-medium">{mockSources.length}</div>
+              <div className="text-sm text-white font-medium">{sources.length}</div>
               <div className="text-xs text-gray-400">Sources Checked</div>
             </div>
             <div className="text-center">
@@ -244,13 +236,25 @@ export function AnalysisResults({ analysis, isLoading, error }: AnalysisResultsP
         <div className="glass-card p-6 rounded-2xl">
           <h3 className="text-xl font-semibold text-white mb-6 flex items-center">
             <Globe className="w-6 h-6 text-primary-500 mr-2" />
-            Verified Sources ({mockSources.length})
+            {analysis.isInvalid ? 'Fact-Checking Sources' : 'Verified Sources'} ({sources.length})
           </h3>
           
+          {analysis.isInvalid && analysis.invalidReason && (
+            <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 mb-6">
+              <div className="flex items-start space-x-3">
+                <XCircle className="w-6 h-6 text-red-500 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="text-red-400 font-semibold mb-2">Invalid Content Detected</h4>
+                  <p className="text-red-300 text-sm">{analysis.invalidReason}</p>
+                </div>
+              </div>
+            </div>
+          )}
+          
           <div className="space-y-4">
-            {mockSources.map((source, index) => (
+            {sources.length > 0 ? sources.map((source: Source, index: number) => (
               <motion.div
-                key={source.id}
+                key={index}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -259,16 +263,27 @@ export function AnalysisResults({ analysis, isLoading, error }: AnalysisResultsP
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-2">
-                      <h4 className="text-white font-medium">{source.title}</h4>
+                      <a 
+                        href={source.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-white font-medium hover:text-primary-400 transition-colors"
+                      >
+                        {source.title}
+                      </a>
                       <ExternalLink className="w-4 h-4 text-gray-400" />
                     </div>
                     <div className="flex items-center space-x-4 text-sm text-gray-400 mb-2">
                       <span>{source.publisher}</span>
                       <span>•</span>
                       <span>Credibility: {source.credibilityScore}%</span>
+                      <span>•</span>
+                      <span className={source.supportsClaim ? 'text-green-400' : 'text-red-400'}>
+                        {source.supportsClaim ? 'Supports' : 'Contradicts'}
+                      </span>
                     </div>
                   </div>
-                  <div className="flex-shrink-0">
+                  <div className="flex-shrink-0 flex flex-col items-end space-y-2">
                     <div className={`px-2 py-1 rounded-lg text-xs font-medium ${
                       source.credibilityScore >= 90 ? 'bg-green-500/20 text-green-400' :
                       source.credibilityScore >= 80 ? 'bg-yellow-500/20 text-yellow-400' :
@@ -277,13 +292,23 @@ export function AnalysisResults({ analysis, isLoading, error }: AnalysisResultsP
                       {source.credibilityScore >= 90 ? 'High' :
                        source.credibilityScore >= 80 ? 'Medium' : 'Low'} Trust
                     </div>
+                    {source.supportsClaim ? (
+                      <CheckCircle className="w-4 h-4 text-green-400" />
+                    ) : (
+                      <XCircle className="w-4 h-4 text-red-400" />
+                    )}
                   </div>
                 </div>
                 <p className="text-gray-300 text-sm leading-relaxed">
-                  {source.excerpt}
+                  {source.description}
                 </p>
               </motion.div>
-            ))}
+            )) : (
+              <div className="text-center py-8">
+                <Globe className="w-12 h-12 text-gray-500 mx-auto mb-4" />
+                <p className="text-gray-400">No sources available for verification</p>
+              </div>
+            )}
           </div>
         </div>
       </motion.div>

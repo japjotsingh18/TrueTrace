@@ -28,33 +28,37 @@ export function useAnalysis(analysisId: string | null) {
     setIsLoading(true)
     setError(null)
 
-    // Mock API call - simulate analysis completion
-    const mockAnalysis = () => {
-      setTimeout(() => {
-        // Simulate random results for demo
-        const verdicts: Array<'TRUE' | 'FALSE' | 'MIXED' | 'UNVERIFIED'> = ['TRUE', 'FALSE', 'MIXED', 'UNVERIFIED']
-        const randomVerdict = verdicts[Math.floor(Math.random() * verdicts.length)]
-        const randomConfidence = Math.random() * 0.4 + 0.6 // Between 0.6 and 1.0
-
-        const mockResult: Analysis = {
-          id: analysisId,
-          verdict: randomVerdict,
-          confidence: randomConfidence,
-          reasoning: {
-            summary: 'AI analysis completed successfully',
-            factors: ['Source credibility', 'Content consistency', 'Historical accuracy']
-          },
-          sources: [],
-          createdAt: new Date().toISOString(),
-          status: 'COMPLETED'
+    // Poll for analysis results
+    const pollAnalysis = async () => {
+      try {
+        const response = await fetch(`/api/analyze?id=${analysisId}`)
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
         }
-
-        setAnalysis(mockResult)
+        
+        const analysisData = await response.json()
+        
+        if (analysisData.status === 'COMPLETED') {
+          setAnalysis(analysisData)
+          setIsLoading(false)
+        } else if (analysisData.status === 'FAILED') {
+          setError(analysisData.error || 'Analysis failed')
+          setIsLoading(false)
+        } else {
+          // Still pending or in progress, continue polling
+          setTimeout(pollAnalysis, 2000) // Poll every 2 seconds
+        }
+        
+      } catch (error) {
+        console.error('Error polling analysis:', error)
+        setError(error instanceof Error ? error.message : 'Failed to fetch analysis')
         setIsLoading(false)
-      }, 3000) // Simulate 3 second analysis time
+      }
     }
 
-    mockAnalysis()
+    // Start polling
+    pollAnalysis()
   }, [analysisId])
 
   return { analysis, isLoading, error }

@@ -28,9 +28,11 @@ export function Navigation() {
   ];
 
   return (
-    <nav className="glass-nav sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+    <nav className="sticky top-0 z-50 p-4">
+      <div className="max-w-7xl mx-auto">
+        <div className="bg-black/20 backdrop-blur-xl border border-white/10 rounded-2xl">
+          <div className="px-6 sm:px-8 lg:px-10">
+            <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <div className="bg-gradient-to-r from-primary-500 to-accent-500 p-2 rounded-lg">
@@ -47,7 +49,7 @@ export function Navigation() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-gray-300 hover:text-white transition-colors duration-200 hover:bg-white/10 px-3 py-2 rounded-lg"
+                className="text-gray-300 hover:text-white transition-all duration-300 hover:bg-white/10 px-4 py-2 rounded-xl backdrop-blur-sm border border-transparent hover:border-white/20"
               >
                 {item.label}
               </Link>
@@ -62,7 +64,7 @@ export function Navigation() {
               <div className="relative">
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  className="flex items-center space-x-2 bg-white/10 hover:bg-white/20 px-3 py-2 rounded-lg transition-colors"
+                  className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm hover:bg-white/20 border border-white/10 px-4 py-2 rounded-xl transition-all duration-300 hover:scale-105"
                 >
                   {session.user?.image ? (
                     <Image
@@ -84,7 +86,7 @@ export function Navigation() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
-                      className="absolute right-0 mt-2 w-48 glass-card shadow-lg rounded-lg py-2"
+                      className="absolute right-0 mt-3 w-48 bg-black/40 backdrop-blur-xl border border-white/20 rounded-xl py-2"
                     >
                       <Link
                         href="/dashboard"
@@ -117,7 +119,7 @@ export function Navigation() {
             ) : (
               <button
                 onClick={() => signIn()}
-                className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 px-6 py-2 rounded-xl font-medium transition-all duration-300 hover:scale-105"
               >
                 Sign In
               </button>
@@ -125,28 +127,29 @@ export function Navigation() {
 
             {/* Mobile menu button */}
             <button
-              className="md:hidden p-2 rounded-lg hover:bg-white/10 transition-colors"
+              className="md:hidden p-2 rounded-xl hover:bg-white/10 backdrop-blur-sm border border-white/10 transition-all duration-300"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
-        </div>
+            </div>
+          </div>
 
-        {/* Mobile Navigation */}
-        <AnimatePresence>
-          {isMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="md:hidden border-t border-white/20 py-4"
-            >
+          {/* Mobile Navigation */}
+          <AnimatePresence>
+            {isMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="md:hidden border-t border-white/20 px-6 py-4 rounded-b-2xl"
+              >
               {navItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="block py-2 px-4 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                  className="block py-3 px-4 text-gray-300 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-300 backdrop-blur-sm border border-transparent hover:border-white/20"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.label}
@@ -155,6 +158,7 @@ export function Navigation() {
             </motion.div>
           )}
         </AnimatePresence>
+        </div>
       </div>
     </nav>
   )

@@ -40,27 +40,127 @@
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
   }
+  
+  body {
+    background: #0f1419;
+    background-image: 
+      /* Primary gradient overlay */
+      radial-gradient(circle at 25% 25%, rgba(6, 182, 212, 0.15) 0%, transparent 60%),
+      radial-gradient(circle at 75% 75%, rgba(247, 147, 26, 0.12) 0%, transparent 60%),
+      radial-gradient(circle at 50% 10%, rgba(139, 92, 246, 0.1) 0%, transparent 70%),
+      radial-gradient(circle at 10% 80%, rgba(34, 197, 94, 0.08) 0%, transparent 50%);
+    position: relative;
+    min-height: 100vh;
+  }
+  
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      /* Large contour rings */
+      radial-gradient(ellipse 1400px 1000px at 30% 20%, transparent 15%, rgba(6, 182, 212, 0.04) 16%, rgba(6, 182, 212, 0.04) 18%, transparent 19%),
+      radial-gradient(ellipse 1600px 1200px at 30% 20%, transparent 25%, rgba(6, 182, 212, 0.03) 26%, rgba(6, 182, 212, 0.03) 28%, transparent 29%),
+      radial-gradient(ellipse 1800px 1400px at 30% 20%, transparent 35%, rgba(6, 182, 212, 0.02) 36%, rgba(6, 182, 212, 0.02) 38%, transparent 39%),
+      
+      /* Medium contour rings */
+      radial-gradient(ellipse 1200px 900px at 70% 80%, transparent 20%, rgba(247, 147, 26, 0.035) 21%, rgba(247, 147, 26, 0.035) 23%, transparent 24%),
+      radial-gradient(ellipse 1000px 750px at 70% 80%, transparent 30%, rgba(247, 147, 26, 0.025) 31%, rgba(247, 147, 26, 0.025) 33%, transparent 34%),
+      radial-gradient(ellipse 800px 600px at 70% 80%, transparent 40%, rgba(247, 147, 26, 0.02) 41%, rgba(247, 147, 26, 0.02) 43%, transparent 44%),
+      
+      /* Small detail rings */
+      radial-gradient(ellipse 600px 400px at 80% 30%, transparent 25%, rgba(139, 92, 246, 0.03) 26%, rgba(139, 92, 246, 0.03) 28%, transparent 29%),
+      radial-gradient(ellipse 500px 350px at 20% 70%, transparent 30%, rgba(34, 197, 94, 0.025) 31%, rgba(34, 197, 94, 0.025) 33%, transparent 34%),
+      
+      /* Fine detail lines */
+      radial-gradient(ellipse 1000px 200px at 50% 0%, transparent 45%, rgba(255, 255, 255, 0.008) 46%, rgba(255, 255, 255, 0.008) 48%, transparent 49%),
+      radial-gradient(ellipse 800px 150px at 0% 50%, transparent 50%, rgba(6, 182, 212, 0.012) 51%, rgba(6, 182, 212, 0.012) 53%, transparent 54%),
+      radial-gradient(ellipse 1200px 180px at 100% 70%, transparent 40%, rgba(247, 147, 26, 0.01) 41%, rgba(247, 147, 26, 0.01) 43%, transparent 44%),
+      
+      /* Noise texture overlay */
+      repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 2px,
+        rgba(255, 255, 255, 0.002) 2px,
+        rgba(255, 255, 255, 0.002) 4px
+      ),
+      
+      /* Grid lines */
+      linear-gradient(90deg, transparent 99%, rgba(255, 255, 255, 0.008) 100%),
+      linear-gradient(0deg, transparent 99%, rgba(255, 255, 255, 0.008) 100%);
+      
+    background-size: 
+      100% 100%,
+      100% 100%,
+      100% 100%,
+      100% 100%,
+      100% 100%,
+      100% 100%,
+      100% 100%,
+      100% 100%,
+      100% 100%,
+      100% 100%,
+      100% 100%,
+      20px 20px,
+      80px 80px,
+      80px 80px;
+    opacity: 0.9;
+    z-index: -2;
+    animation: contourFlow 25s ease-in-out infinite alternate;
+  }
+  
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      /* Dynamic highlight spots */
+      radial-gradient(circle 400px at var(--x, 30%) var(--y, 30%), rgba(6, 182, 212, 0.08) 0%, transparent 70%),
+      radial-gradient(circle 300px at var(--x2, 70%) var(--y2, 70%), rgba(247, 147, 26, 0.06) 0%, transparent 70%),
+      /* Subtle vignette */
+      radial-gradient(ellipse 100% 80% at 50% 50%, transparent 60%, rgba(15, 20, 25, 0.3) 100%);
+    z-index: -1;
+    animation: multiHighlight 12s ease-in-out infinite;
+  }
 }
 
 @layer utilities {
   .glass-card {
-    background: #000;
-    border-radius: 0.75rem;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
+  
   .glass-nav {
-    background: #000;
-    border-bottom: none;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
+  
   .gradient-text {
     color: #fff;
-    background: none;
-  background-clip: initial;
-  -webkit-background-clip: initial;
-  -webkit-text-fill-color: initial;
+    background: linear-gradient(135deg, #06b6d4, #f97316);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease-in-out infinite alternate;
   }
   
   .neon-glow {
-    box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+    box-shadow: 
+      0 0 20px rgba(6, 182, 212, 0.3),
+      0 0 40px rgba(6, 182, 212, 0.2),
+      0 0 60px rgba(6, 182, 212, 0.1);
   }
   
   .animate-fade-in {
@@ -91,5 +191,101 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes contourFlow {
+  0% {
+    transform: translateX(0) translateY(0) scale(1) rotate(0deg);
+  }
+  20% {
+    transform: translateX(-30px) translateY(-20px) scale(1.02) rotate(0.5deg);
+  }
+  40% {
+    transform: translateX(15px) translateY(-35px) scale(0.98) rotate(-0.3deg);
+  }
+  60% {
+    transform: translateX(-20px) translateY(25px) scale(1.01) rotate(0.2deg);
+  }
+  80% {
+    transform: translateX(25px) translateY(15px) scale(0.99) rotate(-0.4deg);
+  }
+  100% {
+    transform: translateX(0) translateY(0) scale(1) rotate(0deg);
+  }
+}
+
+@keyframes multiHighlight {
+  0% {
+    --x: 20%;
+    --y: 30%;
+    --x2: 80%;
+    --y2: 70%;
+    opacity: 0.4;
+  }
+  25% {
+    --x: 70%;
+    --y: 20%;
+    --x2: 30%;
+    --y2: 80%;
+    opacity: 0.7;
+  }
+  50% {
+    --x: 80%;
+    --y: 80%;
+    --x2: 20%;
+    --y2: 20%;
+    opacity: 0.5;
+  }
+  75% {
+    --x: 30%;
+    --y: 70%;
+    --x2: 70%;
+    --y2: 30%;
+    opacity: 0.6;
+  }
+  100% {
+    --x: 20%;
+    --y: 30%;
+    --x2: 80%;
+    --y2: 70%;
+    opacity: 0.4;
+  }
+}
+
+@keyframes highlight {
+  0% {
+    --x: 20%;
+    --y: 20%;
+    opacity: 0.3;
+  }
+  25% {
+    --x: 80%;
+    --y: 30%;
+    opacity: 0.6;
+  }
+  50% {
+    --x: 70%;
+    --y: 80%;
+    opacity: 0.4;
+  }
+  75% {
+    --x: 30%;
+    --y: 70%;
+    opacity: 0.5;
+  }
+  100% {
+    --x: 20%;
+    --y: 20%;
+    opacity: 0.3;
   }
 }
