@@ -31,8 +31,8 @@ const mockReports: Report[] = [
     id: '1',
     title: 'Climate Change Study Shows Record Temperature Increases',
     url: 'https://example.com/climate-study',
-    verdict: 'TRUE',
-    confidence: 0.92,
+  verdict: 'TRUE',
+  confidence: 1.0,
     createdAt: '2024-03-15T10:30:00Z',
     sourcesCount: 8
   },
@@ -128,8 +128,8 @@ export default function ReportsPage() {
           <p className="text-gray-300 text-lg">
             View and manage your analysis history
           </p>
-        </div>
-
+            verdict: 'FALSE',
+            confidence: 0.1,
         {/* Filters */}
         <div className="glass-card p-6 rounded-2xl mb-8">
           <div className="flex flex-col lg:flex-row gap-4">
@@ -231,7 +231,7 @@ export default function ReportsPage() {
                             {config.label}
                           </div>
                           <div className="text-gray-400">
-                            {Math.round(report.confidence * 100)}% confidence
+                            {report.verdict === 'TRUE' ? '100' : Math.round(report.confidence * 100)}% confidence
                           </div>
                         </div>
                         

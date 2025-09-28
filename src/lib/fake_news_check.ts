@@ -1,5 +1,5 @@
 // Utility to check if input matches a known fake news title/text
-export const fakeNewsTitles = [
+export const f = [
 	"Arizona State University to halt International Student Admissions starting Spring 2026.",
 	"10 U.S. Navy Sailors Held by Iranian Military ‚Äì Signs of a Neocon Political Stunt",
 	"HOW BLACK LIVES MATTER Terrorists And Cop Killings Can Be Traced Back To Barack Hussein Obama.",
@@ -39,7 +39,7 @@ export const fakeNewsTitles = [
 
 export function isFakeNews(input: string): boolean {
 	const normalizedInput = input.trim().toLowerCase()
-	return fakeNewsTitles.some(title =>
+		return f.some(title =>
 		normalizedInput === title.toLowerCase() ||
 		normalizedInput.includes(title.toLowerCase()) ||
 		title.toLowerCase().includes(normalizedInput)

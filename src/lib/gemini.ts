@@ -115,12 +115,13 @@ class GeminiFactChecker {
    * Generate intelligent mock analysis based on content patterns
    */
   private generateIntelligentMockAnalysis(request: ContentAnalysisRequest): AnalysisResult {
+  // Always set confidence to 1.0 for TRUE verdicts before returning
     const content = request.content.toLowerCase()
     // If input matches known fake news, force confidence strictly below 10%
     if (isFakeNews(request.content)) {
       return {
         verdict: 'FALSE',
-        confidence: Math.round(Math.random() * 99) / 1000, // 0.00 to 0.099 (i.e., <10%)
+        confidence: 0.1, // Always 10%
         reasoning: {
           summary: 'This matches a known fake news entry.',
           factors: ['Matched known fake news dataset'],
@@ -132,8 +133,8 @@ class GeminiFactChecker {
       }
     }
     // For any text/title input, force confidence to 0.1 (10%) or less
-    let verdict: 'TRUE' | 'FALSE' | 'MIXED' | 'UNVERIFIED' | 'INVALID' = 'UNVERIFIED'
-    let confidence = 0.1 * Math.random(); // 0% to 10%
+  let verdict: 'TRUE' | 'FALSE' | 'MIXED' | 'UNVERIFIED' | 'INVALID' = 'UNVERIFIED'
+  let confidence = 0.1; // Always 10% for UNVERIFIED by default
     let factors: string[] = [];
     let summary = '';
     let sources: AnalysisResult['sources'] = [];
@@ -352,7 +353,7 @@ class GeminiFactChecker {
     // Legitimate news content with reliable patterns
     else if ((reliableCount > 0 || newsCount > 1) && suspiciousCount === 0) {
       verdict = 'TRUE'
-      confidence = Math.max(confidence, 0.80 + Math.random() * 0.15)
+      confidence = 1.0 // Always 100% for verified/TRUE
       factors.push('Contains credible reporting patterns', 'Professional journalism indicators', 'Evidence-based language')
       if (!summary) summary = 'Content appears to follow professional journalism standards and contains credible reporting elements'
       
@@ -392,7 +393,7 @@ class GeminiFactChecker {
 
     // Analyze content length and structure
     if (request.content.length < 100) {
-      confidence = Math.max(0.3, confidence - 0.2)
+      confidence = 0.1; // Always 10% for short/ambiguous content
       factors.push('Very short content - limited analysis possible')
     } else if (request.content.length > 1000) {
       confidence = Math.min(0.95, confidence + 0.1)
@@ -449,6 +450,13 @@ class GeminiFactChecker {
       summary = 'Content is from a satire or unverified news website and should not be treated as factual.';
     }
 
+    // Force confidence to 0.1 for all UNVERIFIED verdicts
+    if (verdict === 'UNVERIFIED') {
+      confidence = 0.1;
+    }
+    if (verdict === 'TRUE') {
+      confidence = 1.0;
+    }
     return {
       verdict,
       confidence: Math.round(confidence * 100) / 100, // Round to 2 decimal places
