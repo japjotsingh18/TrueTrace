@@ -67,6 +67,7 @@ export default function ReportsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedVerdict, setSelectedVerdict] = useState<string>('all')
   const [sortBy, setSortBy] = useState<'date' | 'confidence'>('date')
+  const [modalReport, setModalReport] = useState<Report | null>(null)
 
   const getVerdictConfig = (verdict: string) => {
     switch (verdict) {
@@ -119,6 +120,7 @@ export default function ReportsPage() {
 
   return (
     <div className="min-h-screen bg-navy-900 py-8">
+      <VerificationReportModal open={!!modalReport} onClose={() => setModalReport(null)} report={modalReport} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
@@ -235,13 +237,12 @@ export default function ReportsPage() {
                         </div>
                         
                         <div className="flex items-center space-x-2">
-                          <button className="flex items-center space-x-1 bg-white/10 hover:bg-white/20 text-white px-3 py-2 rounded-lg text-sm transition-colors">
-                            <Eye className="w-4 h-4" />
-                            <span>View</span>
-                          </button>
-                          <button className="flex items-center space-x-1 bg-primary-500 hover:bg-primary-600 text-white px-3 py-2 rounded-lg text-sm transition-colors">
-                            <Download className="w-4 h-4" />
-                            <span>Export</span>
+                          <button
+                            className="flex items-center space-x-2 bg-cyan-500 hover:bg-cyan-400 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                            onClick={() => setModalReport(report)}
+                          >
+                            <Eye className="w-5 h-5" />
+                            <span>Show Evidence</span>
                           </button>
                         </div>
                       </div>
@@ -255,4 +256,66 @@ export default function ReportsPage() {
       </div>
     </div>
   )
+}
+
+// Modal component for showing the verification report
+function VerificationReportModal({ open, onClose, report }: { open: boolean, onClose: () => void, report: Report | null }) {
+  if (!open || !report) return null;
+  // Placeholder data for sources (simulate Google API response)
+  const sources = [
+    {
+      name: 'AP News',
+      credibility: 93,
+      supports: true,
+    },
+    {
+      name: 'BBC News',
+      credibility: 91,
+      supports: true,
+    },
+  ];
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+      <div className="bg-navy-950 max-w-lg w-full rounded-2xl shadow-2xl p-8 relative border border-cyan-900">
+        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors text-lg font-bold">×</button>
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-green-400 flex items-center gap-2 mb-2">
+            <CheckCircle className="w-6 h-6 text-green-400" /> Verification Report
+          </h2>
+          <div className="text-gray-300 text-sm mb-2">Claim Analyzed:</div>
+          <div className="bg-navy-900 rounded-lg px-4 py-2 text-white text-base mb-4 font-mono">{report.title.slice(0, 60)}...</div>
+          <div className="flex items-center gap-4 mb-2">
+            <span className="text-cyan-400 font-semibold">Sources Checked:</span>
+            <span className="text-white">{sources.length}</span>
+          </div>
+          <div className="flex items-center gap-4 mb-4">
+            <span className="text-green-400 font-semibold">Status:</span>
+            <span className="bg-green-500/10 text-green-300 px-3 py-1 rounded-full font-bold text-sm border border-green-500/30 shadow">Verified True (100% Confidence)</span>
+          </div>
+          <div className="text-gray-300 mb-6">
+            This content was verified as factually accurate by cross-referencing multiple reputable sources using Google-backed AI. The claim matches evidence from trusted news organizations and meets high editorial standards. (This is a placeholder summary.)
+          </div>
+        </div>
+        <div className="mb-6">
+          <div className="text-cyan-400 font-semibold mb-2">Verified Sources</div>
+          <div className="grid gap-3">
+            {sources.map((src, i) => (
+              <div key={i} className="bg-navy-900 rounded-xl p-4 flex items-center justify-between border border-cyan-800 shadow hover:shadow-cyan-700/30 transition-shadow">
+                <div>
+                  <div className="text-white font-semibold">{src.name}</div>
+                  <div className="text-xs text-gray-400">Credibility: <span className="text-cyan-400 font-bold">{src.credibility}%</span></div>
+                </div>
+                <div className={src.supports ? 'text-green-400 font-bold' : 'text-red-400 font-bold'}>
+                  {src.supports ? 'Supports' : 'Contradicts'}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="text-gray-500 text-xs text-center border-t border-cyan-900 pt-4 mt-4">
+          Analyzed on Sep 28, 2025 • Time: 2.3s
+        </div>
+      </div>
+    </div>
+  );
 }

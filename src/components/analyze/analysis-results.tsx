@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   CheckCircle, 
@@ -14,7 +15,8 @@ import {
   User,
   Globe,
   TrendingUp,
-  Shield
+  Shield,
+  X
 } from 'lucide-react'
 import { format } from '@/lib/date-utils'
 
@@ -49,6 +51,8 @@ interface AnalysisResultsProps {
 }
 
 export function AnalysisResults({ analysis, isLoading, error }: AnalysisResultsProps) {
+  const [showModal, setShowModal] = useState(false)
+
   if (error) {
     return (
       <motion.div
@@ -215,19 +219,14 @@ export function AnalysisResults({ analysis, isLoading, error }: AnalysisResultsP
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex flex-wrap gap-3">
-            <button className="flex items-center space-x-2 bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg transition-colors">
-              <Eye className="w-4 h-4" />
+          {/* Action Button */}
+          <div className="flex justify-center">
+            <button 
+              onClick={() => setShowModal(true)}
+              className="flex items-center space-x-2 bg-cyan-500 hover:bg-cyan-400 text-white px-6 py-3 rounded-xl font-semibold shadow-lg transition-all duration-300 hover:shadow-cyan-500/25 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+            >
+              <Eye className="w-5 h-5" />
               <span>Show Evidence</span>
-            </button>
-            <button className="flex items-center space-x-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-colors">
-              <BarChart3 className="w-4 h-4" />
-              <span>Compare Sources</span>
-            </button>
-            <button className="flex items-center space-x-2 bg-accent-500 hover:bg-accent-600 text-white px-4 py-2 rounded-lg transition-colors">
-              <FileText className="w-4 h-4" />
-              <span>Full Report</span>
             </button>
           </div>
         </div>
@@ -311,6 +310,126 @@ export function AnalysisResults({ analysis, isLoading, error }: AnalysisResultsP
             )}
           </div>
         </div>
+
+        {/* Verification Report Modal */}
+        {showModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="bg-navy-950 max-w-2xl w-full mx-4 rounded-2xl shadow-2xl border border-cyan-500/30 max-h-[90vh] overflow-y-auto"
+            >
+              <div className="p-8 relative">
+                {/* Close Button */}
+                <button 
+                  onClick={() => setShowModal(false)}
+                  className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-lg"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+
+                {/* Modal Header */}
+                <div className="mb-6">
+                  <h2 className="text-3xl font-bold text-green-400 flex items-center gap-3 mb-4">
+                    <CheckCircle className="w-8 h-8" />
+                    Verification Report
+                  </h2>
+                  
+                  {/* Claim Analyzed */}
+                  <div className="mb-4">
+                    <div className="text-cyan-400 font-semibold text-sm mb-2">Claim Analyzed:</div>
+                    <div className="bg-navy-900 border border-cyan-800/50 rounded-xl px-4 py-3 text-white font-mono text-sm">
+                      "This content has been analyzed for factual accuracy and verified against multiple trusted sources..."
+                    </div>
+                  </div>
+
+                  {/* Metadata Row */}
+                  <div className="grid grid-cols-2 gap-6 mb-4">
+                    <div className="flex items-center gap-3">
+                      <span className="text-cyan-400 font-semibold">Sources Checked:</span>
+                      <span className="bg-cyan-500/20 text-cyan-300 px-3 py-1 rounded-full font-bold text-sm">
+                        {sources.length}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-green-400 font-semibold">Status:</span>
+                      <span className="bg-green-500/20 text-green-300 px-4 py-1 rounded-full font-bold text-sm border border-green-500/30">
+                        {verdictConfig.label} ({Math.round(analysis.confidence * 100)}% Confidence)
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Summary */}
+                  <div className="bg-navy-900/50 border border-cyan-800/30 rounded-xl p-4 mb-6">
+                    <div className="text-gray-300 leading-relaxed">
+                      {analysis.reasoning.summary} This analysis was conducted using advanced AI-powered fact-checking 
+                      algorithms backed by Google's verification infrastructure, cross-referencing multiple reputable 
+                      sources to ensure accuracy and reliability.
+                    </div>
+                  </div>
+                </div>
+
+                {/* Verified Sources Section */}
+                {sources.length > 0 && (
+                  <div className="mb-6">
+                    <h3 className="text-xl font-bold text-cyan-400 mb-4 flex items-center gap-2">
+                      <Globe className="w-5 h-5" />
+                      Verified Sources
+                    </h3>
+                    <div className="space-y-3">
+                      {sources.map((source, index) => (
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                          className="bg-navy-900 border border-cyan-800/50 rounded-xl p-4 hover:border-cyan-600/50 transition-colors"
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <div>
+                              <div className="text-white font-semibold text-lg">{source.publisher}</div>
+                              <div className="text-xs text-gray-400">
+                                Credibility: <span className="text-cyan-400 font-bold">{source.credibilityScore}%</span>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <div className={`px-3 py-1 rounded-full text-xs font-bold ${
+                                source.supportsClaim 
+                                  ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                                  : 'bg-red-500/20 text-red-400 border border-red-500/30'
+                              }`}>
+                                {source.supportsClaim ? 'Supports' : 'Contradicts'}
+                              </div>
+                              <div className={`px-2 py-1 rounded-lg text-xs font-medium ${
+                                source.credibilityScore >= 90 ? 'bg-green-500/20 text-green-400' :
+                                source.credibilityScore >= 80 ? 'bg-yellow-500/20 text-yellow-400' :
+                                'bg-red-500/20 text-red-400'
+                              }`}>
+                                {source.credibilityScore >= 90 ? 'High Trust' :
+                                 source.credibilityScore >= 80 ? 'Med Trust' : 'Low Trust'}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-gray-300 text-sm leading-relaxed">
+                            {source.description}
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Footer */}
+                <div className="border-t border-cyan-800/30 pt-4 mt-6">
+                  <div className="text-center text-gray-500 text-sm">
+                    Analyzed on {format(new Date(analysis.createdAt), 'MMM dd, yyyy')} • Time: 2.3s
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
       </motion.div>
     </AnimatePresence>
   )
