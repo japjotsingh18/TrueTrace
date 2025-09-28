@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Shield, Github, Twitter, Mail } from 'lucide-react'
+import { Zap, Github, Twitter, Mail } from 'lucide-react'
 
 export function Footer() {
   return (
@@ -9,11 +9,12 @@ export function Footer() {
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              <div className="bg-gradient-to-r from-primary-500 to-accent-500 p-2 rounded-lg">
-                <Shield className="w-6 h-6 text-white" />
+              <div className="bg-black border border-white/20 p-2 rounded-full flex items-center justify-center">
+                {/* Minimalistic glasses icon using Zap as placeholder */}
+                <Zap className="w-6 h-6 text-cyan-400" />
               </div>
-              <span className="font-bold text-xl gradient-text">
-                FakeNews Detector
+              <span className="font-bold text-xl gradient-text font-abak">
+                TrueTrace
               </span>
             </div>
             <p className="text-gray-400 max-w-md mb-4">
@@ -98,7 +99,7 @@ export function Footer() {
         <div className="border-t border-white/10 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
-              © 2024 FakeNews Detector. All rights reserved.
+              © 2024 TrueTrace. All rights reserved.
             </p>
             <p className="text-gray-500 text-xs mt-2 md:mt-0">
               ⚠️ Not all AI outputs are 100% accurate — always verify with trusted sources

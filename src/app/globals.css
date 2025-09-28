@@ -1,3 +1,15 @@
+@font-face {
+  font-family: 'Abak';
+  src: url('/fonts/abak.woff2') format('woff2'),
+       url('/fonts/abak.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+.font-abak {
+  font-family: 'Abak', sans-serif !important;
+}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,7 +20,9 @@
     --foreground: 210 40% 98%;
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
+  --popover: 0 0% 0%;
+  --background: 0 0% 0%;
+  --card: 0 0% 0%;
     --popover-foreground: 210 40% 98%;
     --primary: 210 40% 98%;
     --primary-foreground: 222.2 84% 4.9%;
@@ -28,15 +42,18 @@
 
 @layer utilities {
   .glass-card {
-    @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-xl;
+    background: #000;
+    border-radius: 0.75rem;
   }
-  
   .glass-nav {
-    @apply bg-white/5 backdrop-blur-lg border-b border-white/10;
+    background: #000;
+    border-bottom: none;
   }
-  
   .gradient-text {
-    @apply bg-gradient-to-r from-primary-500 to-accent-500 bg-clip-text text-transparent;
+    color: #fff;
+    background: none;
+    -webkit-background-clip: initial;
+    -webkit-text-fill-color: initial;
   }
   
   .neon-glow {

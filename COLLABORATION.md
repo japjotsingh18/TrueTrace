@@ -10,8 +10,8 @@ Follow the [DEVELOPMENT.md](./DEVELOPMENT.md) guide for complete setup instructi
 
 ### 3. Quick Setup Commands
 ```bash
-git clone https://github.com/your-username/fake-news-detector.git
-cd fake-news-detector
+git clone https://github.com/your-username/truetrace.git
+cd truetrace
 npm install
 cp .env.example .env
 # Edit .env with your local settings

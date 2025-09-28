@@ -14,8 +14,8 @@ This guide will help your teammates set up the fake news detection platform for 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/fake-news-detector.git
-cd fake-news-detector
+git clone https://github.com/your-username/truetrace.git
+cd truetrace
 ```
 
 ### 2. Install Dependencies

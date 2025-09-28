@@ -1,3 +1,10 @@
+# TrueTrace 🛡️
+A sleek, modern AI-powered true trace detection and verification web application built for hackathon judges who want to see the "wow factor" in both functionality and design.
+![TrueTrace](https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&h=400&fit=crop&auto=format)
+This guide will help your teammates set up the TrueTrace platform for local development.
+DATABASE_URL="postgresql://username:password@localhost:5432/truetrace_db"
+git clone https://github.com/your-username/truetrace.git
+cd truetrace
 # FakeNews Detector 🛡️
 
 A sleek, modern AI-powered fake news detection and verification web application built for hackathon judges who want to see the "wow factor" in both functionality and design.

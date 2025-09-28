@@ -12,7 +12,7 @@ import {
   User, 
   LogOut, 
   Settings,
-  Shield,
+  Zap,
   BarChart3
 } from 'lucide-react'
 
@@ -33,11 +33,12 @@ export function Navigation() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <div className="bg-gradient-to-r from-primary-500 to-accent-500 p-2 rounded-lg">
-              <Shield className="w-6 h-6 text-white" />
+            <div className="bg-black border border-white/20 p-2 rounded-full flex items-center justify-center">
+              {/* Minimalistic glasses icon using Zap as placeholder */}
+              <Zap className="w-6 h-6 text-cyan-400" />
             </div>
-            <span className="font-bold text-xl gradient-text">
-              FakeNews Detector
+            <span className="font-bold text-xl gradient-text font-abak">
+              TrueTrace
             </span>
           </Link>
 
