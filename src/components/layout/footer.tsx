@@ -1,14 +1,7 @@
-
 import Link from 'next/link'
-<<<<<<< HEAD
 import { Zap, Github, Twitter, Mail } from 'lucide-react'
-=======
-import { Shield, Github, Twitter, Mail } from 'lucide-react'
-import { motion } from 'framer-motion'
->>>>>>> 768bc65cc2909bc6e6714ae63bb5370f7b66404a
 
 export function Footer() {
-
   return (
     <footer className="bg-navy-800/50 border-t border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -16,9 +9,8 @@ export function Footer() {
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              <div className="bg-black border border-white/20 p-2 rounded-full flex items-center justify-center">
-                {/* Minimalistic glasses icon using Zap as placeholder */}
-                <Zap className="w-6 h-6 text-cyan-400" />
+              <div className="bg-gradient-to-r from-primary-500 to-accent-500 p-2 rounded-lg">
+                <Zap className="w-6 h-6 text-white" />
               </div>
               <span className="font-bold text-xl gradient-text font-abak">
                 TrueTrace
