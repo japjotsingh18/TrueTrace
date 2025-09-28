@@ -128,8 +128,7 @@ export default function ReportsPage() {
           <p className="text-gray-300 text-lg">
             View and manage your analysis history
           </p>
-            verdict: 'FALSE',
-            confidence: 0.1,
+        </div>
         {/* Filters */}
         <div className="glass-card p-6 rounded-2xl mb-8">
           <div className="flex flex-col lg:flex-row gap-4">

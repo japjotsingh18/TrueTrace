@@ -115,6 +115,7 @@ class GeminiFactChecker {
    * Generate intelligent mock analysis based on content patterns
    */
   private generateIntelligentMockAnalysis(request: ContentAnalysisRequest): AnalysisResult {
+  // Force any verdict with confidence < 0.35 to be FALSE
   // Always set confidence to 1.0 for TRUE verdicts before returning
     const content = request.content.toLowerCase()
     // If input matches known fake news, force confidence strictly below 10%
@@ -456,6 +457,10 @@ class GeminiFactChecker {
     }
     if (verdict === 'TRUE') {
       confidence = 1.0;
+    }
+    // If confidence is less than 35%, force verdict to FALSE
+    if (confidence < 0.35) {
+      verdict = 'FALSE';
     }
     return {
       verdict,
