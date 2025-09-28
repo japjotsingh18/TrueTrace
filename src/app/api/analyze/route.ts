@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import crypto from 'crypto'
 import { geminiFactChecker } from '@/lib/gemini'
+import { fetchWebpageContent } from '@/lib/fetch_webpage'
 
 const analyzeSchema = z.object({
   input: z.string().min(1, 'Input is required'),
@@ -13,7 +14,7 @@ const analyzeSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { input, inputType, fileName, fileSize } = analyzeSchema.parse(body)
+  let { input, inputType, fileName, fileSize } = analyzeSchema.parse(body)
 
     // Generate a unique analysis ID
     const analysisId = crypto.randomUUID()
@@ -41,12 +42,27 @@ export async function POST(request: NextRequest) {
     }
 
     // Simulate some basic validation
+    let extractedText: string | undefined = undefined;
     if (inputType === 'url') {
       try {
         new URL(input)
-      } catch {
+        console.log('[TIMING] Starting fetchWebpageContent:', input)
+        const fetchStart = Date.now();
+        // Fetch and extract webpage content for analysis
+        extractedText = await fetchWebpageContent(input)
+        const fetchEnd = Date.now();
+        console.log(`[TIMING] fetchWebpageContent took ${fetchEnd - fetchStart}ms`)
+        input = extractedText
+        if (!input || input.length < 50) {
+          return NextResponse.json(
+            { error: 'Could not extract enough content from the provided URL.' },
+            { status: 400 }
+          )
+        }
+      } catch (err) {
+        console.log('[TIMING] fetchWebpageContent failed:', err)
         return NextResponse.json(
-          { error: 'Invalid URL format' },
+          { error: 'Invalid URL format or failed to fetch content' },
           { status: 400 }
         )
       }
@@ -66,6 +82,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Include extractedText in response for debugging/display if present
+    if (inputType === 'url' && extractedText) {
+      return NextResponse.json({ ...response, extractedText }, { status: 201 })
+    }
     return NextResponse.json(response, { status: 201 })
 
   } catch (error) {
@@ -158,6 +178,8 @@ async function performAnalysis(analysisId: string, input: string, inputType: str
       }
     }
 
+    console.log('[TIMING] Starting Gemini analysis for', analysisId)
+    const geminiStart = Date.now();
     // Perform Gemini analysis with real-time progress updates
     const analysisPromise = geminiFactChecker.analyzeContent({
       content: input,
@@ -172,6 +194,8 @@ async function performAnalysis(analysisId: string, input: string, inputType: str
     )
 
     const analysisResult = await Promise.race([analysisPromise, timeoutPromise]) as any
+    const geminiEnd = Date.now();
+    console.log(`[TIMING] Gemini analysis took ${geminiEnd - geminiStart}ms for`, analysisId)
 
     // Mark all workflow steps as completed
     const completedSteps = analysisStore[analysisId].workflowSteps.map((step: any) => ({

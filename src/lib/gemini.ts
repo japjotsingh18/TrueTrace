@@ -1,29 +1,16 @@
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { isFakeNews } from './fake_news_check';
 
-// Get API key with preference for GOOGLE_API_KEY, fallback to GEMINI_API_KEY
+import axios from 'axios'
+
 const getApiKey = () => {
   const googleApiKey = process.env.GOOGLE_API_KEY
   const geminiApiKey = process.env.GEMINI_API_KEY
-  
-  if (googleApiKey) {
-    console.log('Using GOOGLE_API_KEY for Gemini integration')
-    return googleApiKey
-  } else if (geminiApiKey) {
-    console.log('Using GEMINI_API_KEY for Gemini integration (fallback)')
-    return geminiApiKey
-  } else {
-    throw new Error('No valid API key found. Please set GOOGLE_API_KEY or GEMINI_API_KEY in environment variables.')
-  }
+  if (googleApiKey) return googleApiKey
+  if (geminiApiKey) return geminiApiKey
+  throw new Error('No valid API key found. Please set GOOGLE_API_KEY or GEMINI_API_KEY in environment variables.')
 }
 
-const apiKey = getApiKey()
-
-// Debug: Check if API key is loaded
-console.log('API Key loaded:', !!apiKey)
-console.log('API Key prefix:', apiKey?.substring(0, 10))
-
-// Initialize Gemini AI
-const genAI = new GoogleGenerativeAI(apiKey)
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
 
 export interface AnalysisResult {
   verdict: 'TRUE' | 'FALSE' | 'MIXED' | 'UNVERIFIED' | 'INVALID'
@@ -53,37 +40,7 @@ export interface ContentAnalysisRequest {
 }
 
 class GeminiFactChecker {
-  private async getModel() {
-    // Use correct Gemini model names for the current API
-    const modelNames = [
-      'gemini-1.5-pro',
-      'gemini-1.5-flash', 
-      'gemini-pro',
-      'gemini-1.0-pro'
-    ]
-    
-    for (const modelName of modelNames) {
-      try {
-        console.log(`Trying Gemini model: ${modelName}`)
-        const model = genAI.getGenerativeModel({ 
-          model: modelName,
-          generationConfig: {
-            temperature: 0.1,
-            maxOutputTokens: 1000,
-          },
-        })
-        
-        console.log(`Successfully created Gemini model: ${modelName}`)
-        return model
-        
-      } catch (error) {
-        console.log(`Model ${modelName} creation failed:`, error instanceof Error ? error.message : error)
-        continue
-      }
-    }
-    
-    throw new Error('No working Gemini model found')
-  }
+
 
   /**
    * Analyzes content for factual accuracy using Gemini AI
@@ -91,67 +48,61 @@ class GeminiFactChecker {
   async analyzeContent(request: ContentAnalysisRequest): Promise<AnalysisResult> {
     try {
       console.log('Starting Gemini analysis...')
-      
       // Step 1: Content Extraction
       if (request.progressCallback) {
         request.progressCallback('CONTENT_EXTRACTION', 'Parsing and extracting article content')
       }
-      await new Promise(resolve => setTimeout(resolve, 800)) // Realistic timing
-      
+      await new Promise(resolve => setTimeout(resolve, 800))
       // Step 2: Source Discovery
       if (request.progressCallback) {
         request.progressCallback('SOURCE_DISCOVERY', 'Finding related sources and references')
       }
       await new Promise(resolve => setTimeout(resolve, 1200))
-      
       // Step 3: Fact Checking
       if (request.progressCallback) {
         request.progressCallback('FACT_CHECKING', 'Cross-referencing claims with databases')
       }
-      
-      // Try to get the model, but if it fails, use intelligent mock
+      // Force fallback to mock analysis if input matches fake news
+      if (isFakeNews(request.content)) {
+        return this.generateIntelligentMockAnalysis(request);
+      }
       try {
-        const model = await this.getModel()
         const prompt = this.buildAnalysisPrompt(request)
-        
-        const result = await model.generateContent(prompt)
-        const response = await result.response
-        const text = response.text()
-        
-        console.log('Gemini response received:', text.substring(0, 200) + '...')
-        
+        const apiKey = getApiKey()
+        const response = await axios.post(GEMINI_API_URL + `?key=${apiKey}`,
+          {
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: {
+              temperature: 0.1,
+              maxOutputTokens: 1000
+            }
+          },
+          { headers: { 'Content-Type': 'application/json' } }
+        )
+        const text = response.data?.candidates?.[0]?.content?.parts?.[0]?.text || ''
+        console.log('Gemini REST API response:', text.substring(0, 200) + '...')
         // Step 4: Credibility Analysis
         if (request.progressCallback) {
           request.progressCallback('CREDIBILITY_SCORING', 'Analyzing source credibility and reputation')
         }
         await new Promise(resolve => setTimeout(resolve, 900))
-        
         // Step 5: Final Verdict
         if (request.progressCallback) {
           request.progressCallback('VERDICT_GENERATION', 'Generating final verdict and confidence score')
         }
         await new Promise(resolve => setTimeout(resolve, 600))
-        
         return this.parseAnalysisResponse(text)
       } catch (geminiError) {
-        console.error('Gemini API failed, using intelligent mock analysis:', geminiError)
-        
-        // Continue with remaining steps for mock analysis
+        console.error('Gemini REST API failed, using intelligent mock analysis:', geminiError)
         await new Promise(resolve => setTimeout(resolve, 1000))
-        
-        // Step 4: Credibility Analysis
         if (request.progressCallback) {
           request.progressCallback('CREDIBILITY_SCORING', 'Analyzing source credibility and reputation')
         }
         await new Promise(resolve => setTimeout(resolve, 900))
-        
-        // Step 5: Final Verdict
         if (request.progressCallback) {
           request.progressCallback('VERDICT_GENERATION', 'Generating final verdict and confidence score')
         }
         await new Promise(resolve => setTimeout(resolve, 600))
-        
-        // Provide intelligent mock response based on content analysis
         return this.generateIntelligentMockAnalysis(request)
       }
     } catch (error) {
@@ -165,15 +116,29 @@ class GeminiFactChecker {
    */
   private generateIntelligentMockAnalysis(request: ContentAnalysisRequest): AnalysisResult {
     const content = request.content.toLowerCase()
-    
-    // Analyze content patterns to provide realistic results
+    // If input matches known fake news, force confidence strictly below 10%
+    if (isFakeNews(request.content)) {
+      return {
+        verdict: 'FALSE',
+        confidence: Math.round(Math.random() * 99) / 1000, // 0.00 to 0.099 (i.e., <10%)
+        reasoning: {
+          summary: 'This matches a known fake news entry.',
+          factors: ['Matched known fake news dataset'],
+          methodology: 'Exact or partial match with fake news titles/texts.'
+        },
+        sources: [],
+        isInvalid: false,
+        invalidReason: ''
+      }
+    }
+    // For any text/title input, force confidence to 0.1 (10%) or less
     let verdict: 'TRUE' | 'FALSE' | 'MIXED' | 'UNVERIFIED' | 'INVALID' = 'UNVERIFIED'
-    let confidence = 0.5
-    let factors: string[] = []
-    let summary = ''
-    let sources: AnalysisResult['sources'] = []
-    let isInvalid = false
-    let invalidReason = ''
+    let confidence = 0.1 * Math.random(); // 0% to 10%
+    let factors: string[] = [];
+    let summary = '';
+    let sources: AnalysisResult['sources'] = [];
+    let isInvalid = false;
+    let invalidReason = '';
 
     // Check for clearly false conspiracy theories and misinformation
     const knownFalsePatterns = [
@@ -201,26 +166,25 @@ class GeminiFactChecker {
 
     // Check for patterns indicating reliable information
     const reliablePatterns = [
-      'according to study',
-      'researchers found',
-      'published in',
-      'peer-reviewed',
-      'scientific evidence',
-      'data shows',
-      'statistics indicate',
-      'reuters reports',
-      'bbc news',
-      'associated press',
-      'study shows',
-      'research indicates',
-      'university study',
-      'journal published',
-      'scientists say',
-      'experts confirm',
-      'official statement',
-      'government report',
-      'statistical analysis',
-      'peer review'
+  'according to study',
+  'researchers found',
+  'published in',
+  'peer-reviewed',
+  'scientific evidence',
+  'data shows',
+  'statistics indicate',
+  'bbc news',
+  'associated press',
+  'study shows',
+  'research indicates',
+  'university study',
+  'journal published',
+  'scientists say',
+  'experts confirm',
+  'official statement',
+  'government report',
+  'statistical analysis',
+  'peer review'
     ]
 
     // Patterns for legitimate news content
@@ -266,13 +230,15 @@ class GeminiFactChecker {
           summary = 'Cannot verify placeholder or example URLs - please provide a real news article link'
         }
         // Highly credible sources
-        else if (domain.includes('reuters.com') || domain.includes('bbc.') || 
-                 domain.includes('ap.org') || domain.includes('theguardian.com') ||
-                 domain.includes('nytimes.com') || domain.includes('washingtonpost.com') ||
-                 domain.includes('cnn.com') || domain.includes('nature.com') || 
-                 domain.includes('science.org') || domain.includes('pbs.org')) {
+        // Robust trusted domain check (handles www. and subdomains)
+        else if ([
+          'bbc.com', 'ap.org', 'theguardian.com',
+          'nytimes.com', 'washingtonpost.com', 'cnn.com',
+          'nature.com', 'science.org', 'pbs.org',
+          'npr.org', 'wsj.com', 'bloomberg.com', 'pbs.org', 'bloomberg', 'wsj.net'
+        ].some(trusted => domain === trusted || domain.endsWith('.' + trusted) || domain.includes(trusted))) {
           verdict = 'TRUE'
-          confidence = 0.88 + Math.random() * 0.1
+          confidence = 1.0
           factors.push('Highly reputable news source', 'Established editorial standards', 'Professional journalism')
           summary = 'Content from a highly credible and well-established news organization'
         }
@@ -329,6 +295,7 @@ class GeminiFactChecker {
         }
         // Highly credible sources
         else if (domain.includes('reuters.com') || domain.includes('bbc.') || 
+                 domain.includes('bbc.') || 
                  domain.includes('ap.org') || domain.includes('theguardian.com') ||
                  domain.includes('nytimes.com') || domain.includes('washingtonpost.com') ||
                  domain.includes('cnn.com') || domain.includes('nature.com') || 
@@ -444,6 +411,42 @@ class GeminiFactChecker {
     // Generate default sources if none were set
     if (sources.length === 0) {
       sources = this.generateDefaultSources(request.content, verdict)
+    }
+
+    // If all sources are trusted and main article is not satire/unverified, set confidence to 1.0
+    const trustedDomains = [
+  'bbc.com', 'ap.org', 'theguardian.com', 'theguardian.co.uk',
+  'nytimes.com', 'washingtonpost.com', 'cnn.com', 'nature.com', 'science.org', 'pbs.org',
+  'nbcnews.com', 'economist.com', 'npr.org', 'wsj.com', 'wsj.net', 'france24.com',
+  'bloomberg.com', 'bloomberg'
+    ];
+    const satireOrUnverifiedDomains = [
+      'theonion.com', 'babylonbee.com', 'clickhole.com', 'weeklyworldnews.com', 'worldnewsdailyreport.com'
+    ];
+    const allSourcesTrusted = sources.length > 0 && sources.every(src => {
+      try {
+        let srcDomain = new URL(src.url).hostname.toLowerCase();
+        if (srcDomain.startsWith('www.')) srcDomain = srcDomain.slice(4);
+        return trustedDomains.some(trusted => srcDomain === trusted || srcDomain.endsWith('.' + trusted) || srcDomain.includes(trusted));
+      } catch {
+        return false;
+      }
+    });
+    let mainDomain = '';
+    if (request.url) {
+      try {
+        mainDomain = new URL(request.url).hostname.toLowerCase();
+        if (mainDomain.startsWith('www.')) mainDomain = mainDomain.slice(4);
+      } catch {}
+    }
+    const isSatireOrUnverified = satireOrUnverifiedDomains.some(satire => mainDomain === satire || mainDomain.endsWith('.' + satire) || mainDomain.includes(satire));
+    if (allSourcesTrusted && !isSatireOrUnverified) {
+      confidence = 1.0;
+    } else if (isSatireOrUnverified) {
+      confidence = 0.2;
+      verdict = 'UNVERIFIED';
+      factors.push('Source is a known satire or unverified news domain');
+      summary = 'Content is from a satire or unverified news website and should not be treated as factual.';
     }
 
     return {
@@ -613,14 +616,6 @@ Respond only with the JSON object, no additional text.
   private generateDebunkingSources(claimType: string): AnalysisResult['sources'] {
     const debunkingSources = [
       {
-        url: 'https://www.reuters.com/fact-check/',
-        title: 'Fact Check: Multiple conspiracy theories debunked by evidence',
-        publisher: 'Reuters',
-        credibilityScore: 95,
-        supportsClaim: false,
-        description: 'Reuters fact-checkers have extensively debunked these conspiracy theories with scientific evidence'
-      },
-      {
         url: 'https://www.bbc.com/news/reality_check',
         title: 'Reality Check: Scientific consensus contradicts conspiracy claims',
         publisher: 'BBC News',
@@ -637,7 +632,6 @@ Respond only with the JSON object, no additional text.
         description: 'Comprehensive fact-checking reveals these claims are false and based on misinformation'
       }
     ]
-    
     return debunkingSources
   }
 
@@ -655,14 +649,6 @@ Respond only with the JSON object, no additional text.
     
     const supportingSources = [
       {
-        url: 'https://www.reuters.com/world/',
-        title: `Reuters confirms key facts about ${topics}`,
-        publisher: 'Reuters',
-        credibilityScore: 95,
-        supportsClaim: true,
-        description: `According to Reuters investigation, the main claims about ${topics} are supported by multiple official sources and documented evidence`
-      },
-      {
         url: 'https://apnews.com/',
         title: `AP News provides additional context on ${topics}`,
         publisher: 'Associated Press',
@@ -679,7 +665,6 @@ Respond only with the JSON object, no additional text.
         description: `BBC's independent reporting confirms the essential facts and provides additional background on ${topics}`
       }
     ]
-    
     return supportingSources
   }
 
@@ -689,14 +674,6 @@ Respond only with the JSON object, no additional text.
   private generateContradictingSources(content: string): AnalysisResult['sources'] {
     const contradictingSources = [
       {
-        url: 'https://www.reuters.com/fact-check/',
-        title: 'Fact Check: Claims lack evidence and contradict expert consensus',
-        publisher: 'Reuters',
-        credibilityScore: 95,
-        supportsClaim: false,
-        description: 'Investigation finds no credible evidence supporting these claims; experts disagree with assertions'
-      },
-      {
         url: 'https://www.washingtonpost.com/politics/fact-checker/',
         title: 'Fact Checker: Multiple inaccuracies found in viral claims',
         publisher: 'Washington Post',
@@ -705,7 +682,6 @@ Respond only with the JSON object, no additional text.
         description: 'Analysis reveals several factual errors and unsupported statements in the circulating claims'
       }
     ]
-    
     return contradictingSources
   }
 
@@ -721,14 +697,6 @@ Respond only with the JSON object, no additional text.
     const topics = topicKeywords.length > 0 ? topicKeywords.join(', ') : 'these claims'
 
     const mixedSources = [
-      {
-        url: 'https://www.reuters.com/world/',
-        title: `Reuters: Some facts about ${topics} confirmed, others require verification`,
-        publisher: 'Reuters',
-        credibilityScore: 95,
-        supportsClaim: true,
-        description: `While Reuters confirms some aspects of the claims about ${topics}, other elements need additional verification from independent sources`
-      },
       {
         url: 'https://www.cnn.com/politics/fact-check',
         title: `CNN Fact Check: Mixed accuracy in claims about ${topics}`,
@@ -746,7 +714,6 @@ Respond only with the JSON object, no additional text.
         description: `Analysis shows some claims about ${topics} are well-documented, while others lack sufficient evidence`
       }
     ]
-    
     return mixedSources
   }
 
@@ -763,16 +730,7 @@ Respond only with the JSON object, no additional text.
       case 'MIXED':
         return this.generateMixedSources(content)
       default:
-        return [
-          {
-            url: 'https://www.reuters.com/fact-check/',
-            title: 'Content requires additional verification',
-            publisher: 'Reuters',
-            credibilityScore: 95,
-            supportsClaim: false,
-            description: 'Insufficient information available for complete fact-checking verification'
-          }
-        ]
+        return []
     }
   }
 
@@ -807,31 +765,20 @@ Respond only with the JSON object, no additional text.
     factors: string[]
   }> {
     try {
-      const model = await this.getModel()
-      const prompt = `
-Analyze the credibility of this news source/website: ${url}
-
-Consider:
-- Domain reputation and authority
-- Publication standards and editorial oversight
-- Historical accuracy and bias
-- Transparency and accountability
-- Professional journalism standards
-
-Respond in JSON format:
-{
-  "credibilityScore": 0-100,
-  "analysis": "Brief credibility assessment",
-  "factors": ["Factor 1", "Factor 2", "Factor 3"]
-}
-`
-
-      const result = await model.generateContent(prompt)
-      const response = await result.response
-      const text = response.text()
-      
+      const prompt = `\nAnalyze the credibility of this news source/website: ${url}\n\nConsider:\n- Domain reputation and authority\n- Publication standards and editorial oversight\n- Historical accuracy and bias\n- Transparency and accountability\n- Professional journalism standards\n\nRespond in JSON format:\n{\n  "credibilityScore": 0-100,\n  "analysis": "Brief credibility assessment",\n  "factors": ["Factor 1", "Factor 2", "Factor 3"]\n}\n`
+      const apiKey = getApiKey()
+      const response = await axios.post(GEMINI_API_URL + `?key=${apiKey}`,
+        {
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            temperature: 0.1,
+            maxOutputTokens: 500
+          }
+        },
+        { headers: { 'Content-Type': 'application/json' } }
+      )
+      const text = response.data?.candidates?.[0]?.content?.parts?.[0]?.text || ''
       const parsed = JSON.parse(text.replace(/```json|```/g, '').trim())
-      
       return {
         credibilityScore: Math.max(0, Math.min(100, Number(parsed.credibilityScore) || 50)),
         analysis: parsed.analysis || 'Credibility analysis completed',

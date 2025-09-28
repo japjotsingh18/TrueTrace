@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { GoogleGenerativeAI } from '@google/generative-ai'
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,7 +10,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'GEMINI_API_KEY not found in environment' }, { status: 500 })
     }
 
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
 
     // Try common model names that should work with the current API
     const modelNames = [
@@ -24,32 +22,13 @@ export async function GET(request: NextRequest) {
       'gemini-pro',
       'gemini-1.5-pro-latest'
     ]
+    // Gemini SDK removed. This endpoint is now a placeholder.
     
-    for (const modelName of modelNames) {
-      try {
-        console.log(`Trying model: ${modelName}`)
-        const model = genAI.getGenerativeModel({ model: modelName })
-        
-        const result = await model.generateContent('Say "Hello World" and nothing else.')
-        const response = await result.response
-        const text = response.text()
-        
-        console.log(`Model ${modelName} works! Response:`, text)
-        
-        return NextResponse.json({
-          success: true,
-          workingModel: modelName,
-          response: text,
-          message: 'Found working Gemini model'
-        })
-        
-      } catch (modelError) {
-        console.log(`Model ${modelName} failed:`, modelError instanceof Error ? modelError.message : modelError)
-        continue
-      }
-    }
-    
-    throw new Error('No working model found')
+    // Gemini SDK logic removed. No model test performed.
+    return NextResponse.json({
+      success: true,
+      message: 'Gemini SDK test endpoint is now a placeholder.'
+    })
 
   } catch (error) {
     console.error('Gemini test error:', error)

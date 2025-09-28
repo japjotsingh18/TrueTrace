@@ -77,8 +77,8 @@ export function HowItWorks() {
                 className="relative"
               >
                 {/* Step number */}
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 lg:left-8 lg:translate-x-0">
-                  <div className="bg-gradient-to-r from-primary-500 to-accent-500 text-white text-sm font-bold rounded-full w-8 h-8 flex items-center justify-center">
+                <div className="flex justify-start mb-4 pl-4">
+                  <div className="bg-gradient-to-r from-primary-500 to-accent-500 text-white text-sm font-bold rounded-full w-8 h-8 flex items-center justify-center shadow-lg border border-gray-700">
                     {index + 1}
                   </div>
                 </div>
