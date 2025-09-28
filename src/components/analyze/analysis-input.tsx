@@ -30,7 +30,7 @@ export function AnalysisInput({ onAnalysisStart }: AnalysisInputProps) {
   const tabs = [
     { id: 'url', label: 'URL', icon: LinkIcon, description: 'Paste a news article link' },
     { id: 'text', label: 'Text', icon: FileText, description: 'Enter article text directly' },
-    { id: 'file', label: 'File', icon: Upload, description: 'Upload PDF or text file' }
+    { id: 'file', label: 'File', icon: Upload, description: 'Upload PDF, text, or image file' }
   ]
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,10 +38,10 @@ export function AnalysisInput({ onAnalysisStart }: AnalysisInputProps) {
     if (file) {
       // Validate file type and size
       const maxSize = 10 * 1024 * 1024 // 10MB
-      const allowedTypes = ['text/plain', 'application/pdf', 'text/html']
+      const allowedTypes = ['text/plain', 'application/pdf', 'text/html', 'image/png', 'image/jpeg', 'image/jpg']
       
       if (!allowedTypes.includes(file.type)) {
-        toast.error('Please upload a valid file type (PDF, TXT, or HTML)')
+        toast.error('Please upload a valid file type (PDF, TXT, HTML, PNG, JPG, or JPEG)')
         return
       }
       
@@ -221,7 +221,7 @@ export function AnalysisInput({ onAnalysisStart }: AnalysisInputProps) {
                   >
                     <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                     <p className="text-gray-300 mb-2">Click to upload or drag and drop</p>
-                    <p className="text-gray-500 text-sm">PDF, TXT, or HTML files up to 10MB</p>
+                    <p className="text-gray-500 text-sm">PDF, TXT, HTML, PNG, JPG, or JPEG files up to 10MB</p>
                   </div>
                 ) : (
                   <div className="bg-white/10 rounded-xl p-4 flex items-center justify-between">
@@ -246,7 +246,7 @@ export function AnalysisInput({ onAnalysisStart }: AnalysisInputProps) {
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept=".pdf,.txt,.html"
+                  accept=".pdf,.txt,.html,.png,.jpg,.jpeg"
                   onChange={handleFileSelect}
                   className="hidden"
                 />
