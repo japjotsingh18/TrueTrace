@@ -1,3 +1,8 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @font-face {
   font-family: 'Abak';
   src: url('/fonts/abak.woff2') format('woff2'),
@@ -10,9 +15,6 @@
 .font-abak {
   font-family: 'Abak', sans-serif !important;
 }
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 @layer base {
   :root {
@@ -52,8 +54,9 @@
   .gradient-text {
     color: #fff;
     background: none;
-    -webkit-background-clip: initial;
-    -webkit-text-fill-color: initial;
+  background-clip: initial;
+  -webkit-background-clip: initial;
+  -webkit-text-fill-color: initial;
   }
   
   .neon-glow {
