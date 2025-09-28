@@ -21,15 +21,15 @@ module.exports = {
           600: '#ea580c',
         },
         navy: {
-          800: '#1e293b',
-          900: '#0f172a',
+          800: '#000000ff',
+          900: '#000000ff',
         }
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-        'glass': 'linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0))',
+        'glass': 'linear-gradient(135deg, rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0))',
       },
       backdropBlur: {
         xs: '2px',

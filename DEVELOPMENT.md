@@ -1,6 +1,6 @@
 # 🛠️ Development Setup Guide
 
-This guide will help your teammates set up the fake news detection platform for local development.
+This guide will help your teammates set up the misinformation detection platform (TrueTrace) for local development.
 
 ## 📋 Prerequisites
 

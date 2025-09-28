@@ -1,4 +1,4 @@
-# TrueTrace 🛡️
+
 A sleek, modern AI-powered true trace detection and verification web application built for hackathon judges who want to see the "wow factor" in both functionality and design.
 ![TrueTrace](https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&h=400&fit=crop&auto=format)
 This guide will help your teammates set up the TrueTrace platform for local development.
@@ -7,9 +7,9 @@ git clone https://github.com/your-username/truetrace.git
 cd truetrace
 # FakeNews Detector 🛡️
 
-A sleek, modern AI-powered fake news detection and verification web application built for hackathon judges who want to see the "wow factor" in both functionality and design.
+A sleek, modern AI-powered misinformation detection and verification web application built for hackathon judges who want to see the "wow factor" in both functionality and design.
 
-![FakeNews Detector](https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&h=400&fit=crop&auto=format)
+![TrueTrace](https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&h=400&fit=crop&auto=format)
 
 ## ✨ Features
 
@@ -89,8 +89,8 @@ A sleek, modern AI-powered fake news detection and verification web application 
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/fake-news-detector.git
-cd fake-news-detector
+git clone https://github.com/your-username/TrueTrace.git
+cd TrueTrace
 ```
 
 ### 2. Install Dependencies
@@ -143,7 +143,7 @@ Visit [http://localhost:3000](http://localhost:3000) to see the application.
 ## 📊 Database Schema
 
 ```sql
--- Core tables for fake news detection
+-- Core tables for misinformation detection
 User (id, name, email, role, createdAt)
 Analysis (id, userId, inputType, verdict, confidence, createdAt)
 AnalysisStep (id, analysisId, step, status, details, duration)
@@ -212,10 +212,10 @@ npm run test:e2e
 ### Docker
 ```bash
 # Build image
-docker build -t fake-news-detector .
+docker build -t truetrace .
 
 # Run container
-docker run -p 3000:3000 fake-news-detector
+docker run -p 3000:3000 truetrace
 ```
 
 ### Manual Deployment

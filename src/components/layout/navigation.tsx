@@ -37,7 +37,11 @@ export function Navigation() {
               {/* Minimalistic glasses icon using Zap as placeholder */}
               <Zap className="w-6 h-6 text-cyan-400" />
             </div>
+<<<<<<< HEAD
             <span className="font-bold text-xl gradient-text font-abak">
+=======
+            <span className="font-bold text-xl gradient-text">
+>>>>>>> 768bc65cc2909bc6e6714ae63bb5370f7b66404a
               TrueTrace
             </span>
           </Link>
