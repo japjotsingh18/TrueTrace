@@ -15,38 +15,38 @@ import {
 const features = [
   {
     icon: Brain,
-    title: 'AI-Powered Analysis',
-    description: 'Advanced machine learning algorithms analyze content patterns, source credibility, and fact patterns to detect misinformation.',
+    title: 'AI-Powered Insights',
+    description: 'Smart AI agents analyze patterns, check credibility, and flag misinformation with unmatched accuracy.',
     color: 'text-primary-500'
   },
   {
     icon: Zap,
     title: 'Real-Time Processing',
-    description: 'Get instant results in under 3 seconds with our optimized agentic AI pipeline that works around the clock.',
+    description: 'Get instant results in under 7 seconds with our optimized agentic AI pipeline that works around the clock.',
     color: 'text-accent-500'
   },
   {
     icon: Search,
-    title: 'Source Verification',
-    description: 'Cross-references multiple trusted news sources and fact-checking databases to verify claims and statements.',
+    title: 'Smart Source Checking',
+    description: 'AI agents cross-check claims against trusted databases & news outlets to separate fact from fiction instantly.',
     color: 'text-primary-400'
   },
   {
     icon: Shield,
     title: 'Credibility Scoring',
-    description: 'Comprehensive credibility assessment based on publisher reputation, author expertise, and content quality metrics.',
+    description: 'Comprehensive credibility assessment using publisher reputation, author expertise, and content quality — giving you instant clarity.',
     color: 'text-accent-400'
   },
   {
     icon: Globe,
     title: 'Multi-Platform Support',
-    description: 'Analyze news from any platform - URLs, text, PDFs, and social media posts from major platforms.',
+    description: 'From URLs to PDFs to social media posts — our AI analyzes news across platforms seamlessly.',
     color: 'text-primary-300'
   },
   {
     icon: BarChart3,
     title: 'Detailed Reports',
-    description: 'Get comprehensive analysis reports with evidence, source citations, and reasoning behind every verdict.',
+    description: 'Every analysis comes with citations, reasoning, and evidence so you know exactly why something is flagged.',
     color: 'text-accent-300'
   }
 ]
@@ -63,13 +63,12 @@ export function Features() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            <span className="gradient-text">Powerful Features</span> for
+            <span className="gradient-text">Next-Gen Features</span> for
             <br />
-            <span className="text-white">Accurate Fact-Checking</span>
+            <span className="text-white">Lightning-Fast Truth Detection</span>
           </h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Our advanced AI technology combines multiple verification methods to provide 
-            the most accurate and reliable fact-checking results available.
+            Agentic AI fuses speed, precision, and trust — combining multiple verification layers to deliver unmatched accuracy in spotting misinformation.
           </p>
         </motion.div>
 
@@ -110,31 +109,31 @@ export function Features() {
           <div className="glass-card p-8 rounded-2xl">
             <div className="flex items-center justify-center mb-6">
               <Eye className="w-8 h-8 text-primary-500 mr-3" />
-              <h3 className="text-2xl font-bold text-white">Transparency & Trust</h3>
+              <h3 className="text-2xl font-bold text-white">Built on Clarity, Powered by Integrity</h3>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
               <div>
                 <CheckCircle className="w-8 h-8 text-green-500 mx-auto mb-4" />
-                <h4 className="font-semibold text-white mb-2">Open Source Methods</h4>
+                <h4 className="font-semibold text-white mb-2">Nothing Hidden</h4>
                 <p className="text-gray-400 text-sm">
-                  Our fact-checking methodology is transparent and based on established journalistic standards.
+                  Our methodology is open, transparent, and rooted in globally accepted journalistic standards.
                 </p>
               </div>
               
               <div>
                 <Shield className="w-8 h-8 text-primary-500 mx-auto mb-4" />
-                <h4 className="font-semibold text-white mb-2">Privacy Protected</h4>
+                <h4 className="font-semibold text-white mb-2">Your Data, Your Control</h4>
                 <p className="text-gray-400 text-sm">
-                  Your data is processed securely and never stored permanently without your consent.
+                  We process securely — no misuse. Your privacy comes first.
                 </p>
               </div>
               
               <div>
                 <BarChart3 className="w-8 h-8 text-accent-500 mx-auto mb-4" />
-                <h4 className="font-semibold text-white mb-2">Continuous Improvement</h4>
+                <h4 className="font-semibold text-white mb-2">Always Getting Smarter</h4>
                 <p className="text-gray-400 text-sm">
-                  Our AI models are constantly updated with the latest fact-checking standards and techniques.
+                  Our AI evolves daily with the latest fact-checking techniques, staying ahead of misinformation trends.
                 </p>
               </div>
             </div>

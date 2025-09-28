@@ -41,7 +41,7 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section className="py-24 bg-navy-900">
+    <section className="py-12 bg-navy-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -128,14 +128,14 @@ export function HowItWorks() {
           <div className="text-center">
             <Clock className="w-12 h-12 text-primary-500 mx-auto mb-4" />
             <div className="text-2xl font-bold text-white mb-2">Average Analysis Time</div>
-            <div className="text-4xl font-bold gradient-text mb-2">2.8 seconds</div>
+            <div className="text-4xl font-bold gradient-text mb-2">5 seconds</div>
             <div className="text-gray-400">From submission to results</div>
           </div>
 
           <div className="text-center">
             <Target className="w-12 h-12 text-accent-500 mx-auto mb-4" />
             <div className="text-2xl font-bold text-white mb-2">Accuracy Rate</div>
-            <div className="text-4xl font-bold gradient-text mb-2">99.2%</div>
+            <div className="text-4xl font-bold gradient-text mb-2">90.2%</div>
             <div className="text-gray-400">Verified by independent testing</div>
           </div>
 

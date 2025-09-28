@@ -8,11 +8,11 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center space-x-2 mb-4">
-              <div className="bg-gradient-to-r from-primary-500 to-accent-500 p-2 rounded-lg">
-                <Zap className="w-6 h-6 text-white" />
+            <div className="flex items-center space-x-2 mb-4 group cursor-pointer">
+              <div className="bg-gradient-to-r from-cyan-500 to-white p-2 rounded-lg transition-all duration-300 group-hover:shadow-lg group-hover:shadow-cyan-400/30 group-hover:scale-105">
+                <Zap className="w-6 h-6 text-gray-900 transition-all duration-300 group-hover:rotate-12" />
               </div>
-              <span className="font-bold text-xl gradient-text font-abak">
+              <span className="font-bold text-xl gradient-text font-abak transition-all duration-300 group-hover:tracking-wide">
                 TrueTrace
               </span>
             </div>
@@ -23,21 +23,21 @@ export function Footer() {
             <div className="flex space-x-4">
               <a 
                 href="#" 
-                className="text-gray-400 hover:text-primary-500 transition-colors"
+                className="text-gray-400 hover:text-cyan-400 transition-all duration-300 transform hover:scale-110 hover:shadow-lg hover:shadow-cyan-400/25 p-2 rounded-lg hover:bg-white/5"
                 aria-label="GitHub"
               >
                 <Github className="w-5 h-5" />
               </a>
               <a 
                 href="#" 
-                className="text-gray-400 hover:text-primary-500 transition-colors"
+                className="text-gray-400 hover:text-cyan-400 transition-all duration-300 transform hover:scale-110 hover:shadow-lg hover:shadow-cyan-400/25 p-2 rounded-lg hover:bg-white/5"
                 aria-label="Twitter"
               >
                 <Twitter className="w-5 h-5" />
               </a>
               <a 
                 href="#" 
-                className="text-gray-400 hover:text-primary-500 transition-colors"
+                className="text-gray-400 hover:text-cyan-400 transition-all duration-300 transform hover:scale-110 hover:shadow-lg hover:shadow-cyan-400/25 p-2 rounded-lg hover:bg-white/5"
                 aria-label="Email"
               >
                 <Mail className="w-5 h-5" />
@@ -50,22 +50,22 @@ export function Footer() {
             <h3 className="text-white font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/" className="text-gray-400 hover:text-cyan-400 transition-all duration-300 hover:translate-x-2 hover:drop-shadow-sm block py-1">
                   Home
                 </Link>
               </li>
               <li>
-                <Link href="/analyze" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/analyze" className="text-gray-400 hover:text-cyan-400 transition-all duration-300 hover:translate-x-2 hover:drop-shadow-sm block py-1">
                   Analyze News
                 </Link>
               </li>
               <li>
-                <Link href="/reports" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/reports" className="text-gray-400 hover:text-cyan-400 transition-all duration-300 hover:translate-x-2 hover:drop-shadow-sm block py-1">
                   Saved Reports
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/about" className="text-gray-400 hover:text-cyan-400 transition-all duration-300 hover:translate-x-2 hover:drop-shadow-sm block py-1">
                   About Us
                 </Link>
               </li>
@@ -77,17 +77,17 @@ export function Footer() {
             <h3 className="text-white font-semibold mb-4">Legal</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/privacy" className="text-gray-400 hover:text-cyan-400 transition-all duration-300 hover:translate-x-2 hover:drop-shadow-sm block py-1">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/terms" className="text-gray-400 hover:text-cyan-400 transition-all duration-300 hover:translate-x-2 hover:drop-shadow-sm block py-1">
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link href="/disclaimer" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/disclaimer" className="text-gray-400 hover:text-cyan-400 transition-all duration-300 hover:translate-x-2 hover:drop-shadow-sm block py-1">
                   Disclaimer
                 </Link>
               </li>
