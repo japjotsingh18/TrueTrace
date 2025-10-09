@@ -1,280 +1,363 @@
+# TrueTrace 🔍
 
-A sleek, modern AI-powered true trace detection and verification web application built for hackathon judges who want to see the "wow factor" in both functionality and design.
-![TrueTrace](https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&h=400&fit=crop&auto=format)
-This guide will help your teammates set up the TrueTrace platform for local development.
-DATABASE_URL="postgresql://username:password@localhost:5432/truetrace_db"
-git clone https://github.com/your-username/truetrace.git
-cd truetrace
-# FakeNews Detector 🛡️
+An AI-powered misinformation detection platform that helps users verify the credibility of online content in seconds.
 
-A sleek, modern AI-powered misinformation detection and verification web application built for hackathon judges who want to see the "wow factor" in both functionality and design.
+## 🚀 Features
 
-![TrueTrace](https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&h=400&fit=crop&auto=format)
+### Core Functionality
+- **AI-Powered Content Analysis** - Advanced algorithms to detect misinformation patterns
+- **Real-time Fact Checking** - Instant verification of articles, claims, and content
+- **Credibility Scoring** - Comprehensive scoring system for content reliability
+- **Source Verification** - Cross-reference with trusted databases and fact-checking APIs
+- **URL Analysis** - Direct analysis of web articles and social media posts
 
-## ✨ Features
+### User Experience
+- **Glassmorphism UI** - Modern, elegant interface with glass-card effects
+- **Dark Theme** - Professional dark mode with cyan and orange accents
+- **Responsive Design** - Optimized for desktop and mobile devices
+- **Animated Star Background** - Subtle, engaging visual effects
+- **Enhanced Navigation** - Smooth hover effects and interactive elements
 
-### 🎯 Core Functionality
-- **AI-Powered Analysis**: Advanced agentic AI system for comprehensive fact-checking
-- **Multi-Input Support**: URLs, text input, and file uploads (PDF, TXT, HTML)
-- **Real-Time Agent Workflow**: Visual representation of AI analysis steps
-- **Credibility Scoring**: Comprehensive scoring based on multiple factors
-- **Source Verification**: Cross-references 50+ trusted news sources
-- **Detailed Reports**: Complete analysis with evidence and citations
+### Analysis Features
+- **Multi-source Verification** - Integration with Google Fact Check API
+- **Content Classification** - Categorizes content as True, False, Mixed, or Unverified
+- **Confidence Ratings** - Percentage-based confidence scores
+- **Detailed Reports** - Comprehensive analysis with supporting evidence
+- **Historical Tracking** - Save and review past analyses
 
-### 🎨 Modern UI/UX
-- **Futuristic Design**: Glassmorphism effects with neon accents
-- **Responsive Layout**: Works seamlessly across all devices
-- **Smooth Animations**: Framer Motion powered micro-interactions
-- **Dark Theme**: Easy on the eyes with navy/cyan/orange palette
-- **Accessibility**: WCAG 2.1 AA compliant
-
-### 🔐 Authentication & Security
-- **NextAuth Integration**: Google OAuth and email/password
-- **Role-Based Access**: User and admin roles
-- **Rate Limiting**: Abuse prevention and API protection
-- **Secure File Handling**: Type validation and size limits
-
-## 🚀 Tech Stack
+## 🛠️ Tech Stack
 
 ### Frontend
-- **Next.js 14** with App Router
-- **TypeScript** for type safety
-- **Tailwind CSS** for styling
-- **Framer Motion** for animations
-- **React Hot Toast** for notifications
-- **Lucide React** for icons
+- **Next.js 14** - App Router with server-side rendering
+- **TypeScript** - Type-safe development
+- **Tailwind CSS** - Utility-first styling with custom glassmorphism effects
+- **Framer Motion** - Smooth animations and transitions
+- **React Hot Toast** - Beautiful notification system
 
-### Backend
-- **Next.js API Routes** for serverless functions
-- **Prisma** with PostgreSQL for database
-- **NextAuth** for authentication
-- **Zod** for validation
-- **Redis** for caching and job queues
+### Backend & APIs
+- **Next.js API Routes** - Serverless backend functions
+- **Google Fact Check API** - Fact-checking database integration
+- **Gemini AI** - Advanced content analysis
+- **Custom Analysis Engine** - Multi-layered verification system
 
-### Development
-- **ESLint** for code quality
-- **TypeScript** for type checking
-- **Prisma Studio** for database management
+### Database & Authentication
+- **Prisma ORM** - Type-safe database operations
+- **PostgreSQL** - Robust relational database
+- **NextAuth.js** - Secure authentication system
 
-## 🏗️ Architecture
+## 🚀 Getting Started
 
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Frontend      │    │   API Routes    │    │   Database      │
-│                 │    │                 │    │                 │
-│ • React/Next.js │◄──►│ • Analysis API  │◄──►│ • PostgreSQL    │
-│ • Tailwind CSS  │    │ • Auth API      │    │ • Prisma ORM    │
-│ • Framer Motion │    │ • File Upload   │    │ • Redis Cache   │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │
-         └─────────── Agentic AI Pipeline ───────────────┘
-                            │
-              ┌─────────────────────────────┐
-              │   Content Analysis Flow     │
-              │                             │
-              │ 1. Content Extraction       │
-              │ 2. Source Discovery         │
-              │ 3. Cross-Reference Check    │
-              │ 4. Credibility Scoring      │
-              │ 5. Verdict Generation       │
-              └─────────────────────────────┘
-```
-
-## 🛠️ Installation & Setup
-
-### Prerequisites
-- Node.js 18+ 
-- PostgreSQL database
-- Redis server (optional, for caching)
-
-### 1. Clone the Repository
+1. **Clone the repository**
 ```bash
-git clone https://github.com/your-username/TrueTrace.git
-cd TrueTrace
+git clone https://github.com/your-username/truetrace.git
+cd truetrace
 ```
 
-### 2. Install Dependencies
+2. **Install dependencies**
 ```bash
 npm install
 ```
 
-### 3. Environment Configuration
-Copy `.env.example` to `.env.local` and update the values:
-
-```env
-# Database
-DATABASE_URL="postgresql://username:password@localhost:5432/fake_news_db"
-
-# NextAuth
-NEXTAUTH_SECRET="your-secret-key-here"
-NEXTAUTH_URL="http://localhost:3000"
-
-# Google OAuth (optional)
-GOOGLE_CLIENT_ID="your-google-client-id"
-GOOGLE_CLIENT_SECRET="your-google-client-secret"
-
-# Redis
-REDIS_URL="redis://localhost:6379"
-
-# API Keys
-OPENAI_API_KEY="your-openai-api-key"
-NEWS_API_KEY="your-news-api-key"
-```
-
-### 4. Database Setup
+3. **Set up environment variables**
 ```bash
-# Generate Prisma client
-npm run db:generate
-
-# Run migrations
-npm run db:migrate
-
-# Seed database (optional)
-npm run db:seed
+cp .env.example .env.local
 ```
 
-### 5. Start Development Server
+4. **Configure your API keys** (see API Integration section below)
+
+5. **Set up the database**
+```bash
+npx prisma generate
+npx prisma db push
+```
+
+6. **Run the development server**
 ```bash
 npm run dev
 ```
 
-Visit [http://localhost:3000](http://localhost:3000) to see the application.
+7. **Open your browser**
+Navigate to `http://localhost:3000`
 
-## 📊 Database Schema
+## 🔑 API Integration Guide
 
-```sql
--- Core tables for misinformation detection
-User (id, name, email, role, createdAt)
-Analysis (id, userId, inputType, verdict, confidence, createdAt)
-AnalysisStep (id, analysisId, step, status, details, duration)
-Source (id, analysisId, url, publisher, credibilityScore)
-Report (id, analysisId, userId, reason, status)
+### Required Environment Variables
+
+Create a `.env.local` file in your project root with the following variables:
+
+```bash
+# Database
+DATABASE_URL="postgresql://username:password@localhost:5432/truetrace"
+
+# Google APIs
+GOOGLE_FACT_CHECK_API_KEY="your_google_fact_check_api_key"
+GOOGLE_SEARCH_API_KEY="your_google_custom_search_api_key"
+GOOGLE_SEARCH_ENGINE_ID="your_custom_search_engine_id"
+
+# Gemini AI
+GEMINI_API_KEY="your_gemini_api_key"
+
+# NextAuth
+NEXTAUTH_SECRET="your_nextauth_secret"
+NEXTAUTH_URL="http://localhost:3000"
+
+# Optional: Additional fact-checking APIs
+FACTCHECK_ORG_API_KEY="your_factcheck_org_api_key"
+SNOPES_API_KEY="your_snopes_api_key"
 ```
 
-## 🔌 API Endpoints
+### 1. Google Fact Check API Setup
 
-### Analysis
-- `POST /api/analyze` - Start content analysis
-- `GET /api/analyze?id={analysisId}` - Get analysis results
-- `GET /api/analyze/{id}/sources` - Get verified sources
+1. **Get API Key**:
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Create a new project or select existing one
+   - Enable the "Fact Check Tools API"
+   - Create credentials and get your API key
+
+2. **Integration**:
+```typescript
+// src/lib/fact-check.ts
+export async function checkWithGoogle(query: string) {
+  const response = await fetch(
+    `https://factchecktools.googleapis.com/v1alpha1/claims:search?key=${process.env.GOOGLE_FACT_CHECK_API_KEY}&query=${encodeURIComponent(query)}`
+  );
+  return response.json();
+}
+```
+
+### 2. Google Custom Search API Setup
+
+1. **Create Custom Search Engine**:
+   - Go to [Google Custom Search](https://cse.google.com/cse/)
+   - Create a new search engine
+   - Configure to search fact-checking websites
+   - Get your Search Engine ID
+
+2. **Get Search API Key**:
+   - In Google Cloud Console, enable "Custom Search API"
+   - Use the same API key or create a new one
+
+3. **Integration**:
+```typescript
+// src/lib/google-search.ts
+export async function searchFactChecks(query: string) {
+  const response = await fetch(
+    `https://www.googleapis.com/customsearch/v1?key=${process.env.GOOGLE_SEARCH_API_KEY}&cx=${process.env.GOOGLE_SEARCH_ENGINE_ID}&q=${encodeURIComponent(query)}`
+  );
+  return response.json();
+}
+```
+
+### 3. Gemini AI Setup
+
+1. **Get API Key**:
+   - Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
+   - Create a new API key
+   - Copy the key to your environment variables
+
+2. **Integration**:
+```typescript
+// src/lib/gemini.ts
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+
+export async function analyzeContent(content: string) {
+  const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+  const prompt = `Analyze this content for misinformation: ${content}`;
+  const result = await model.generateContent(prompt);
+  return result.response.text();
+}
+```
+
+### 4. Database Setup (PostgreSQL)
+
+1. **Install PostgreSQL** or use a cloud service like:
+   - [Neon](https://neon.tech/)
+   - [Supabase](https://supabase.com/)
+   - [PlanetScale](https://planetscale.com/)
+
+2. **Update DATABASE_URL** in your `.env.local`
+
+3. **Run migrations**:
+```bash
+npx prisma generate
+npx prisma db push
+```
+
+### 5. Adding Custom Fact-Checking APIs
+
+You can integrate additional APIs by following this pattern:
+
+```typescript
+// src/lib/custom-fact-checker.ts
+interface FactCheckResult {
+  verdict: 'TRUE' | 'FALSE' | 'MIXED' | 'UNVERIFIED';
+  confidence: number;
+  sources: string[];
+}
+
+export async function checkWithCustomAPI(content: string): Promise<FactCheckResult> {
+  try {
+    const response = await fetch('https://your-api-endpoint.com/fact-check', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.YOUR_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ content }),
+    });
+    
+    const data = await response.json();
+    
+    return {
+      verdict: data.verdict,
+      confidence: data.confidence,
+      sources: data.sources,
+    };
+  } catch (error) {
+    console.error('Custom API error:', error);
+    return {
+      verdict: 'UNVERIFIED',
+      confidence: 0,
+      sources: [],
+    };
+  }
+}
+```
+
+### 6. Integrating Your API into the Analysis Pipeline
+
+Update the main analysis endpoint to include your custom API:
+
+```typescript
+// src/app/api/analyze/route.ts
+import { checkWithGoogle } from '@/lib/fact-check';
+import { checkWithCustomAPI } from '@/lib/custom-fact-checker';
+import { analyzeContent } from '@/lib/gemini';
+
+export async function POST(request: Request) {
+  const { content } = await request.json();
+  
+  // Run multiple fact-checking services
+  const [googleResult, customResult, aiAnalysis] = await Promise.all([
+    checkWithGoogle(content),
+    checkWithCustomAPI(content),
+    analyzeContent(content),
+  ]);
+  
+  // Combine results and calculate final verdict
+  const finalVerdict = combineResults([googleResult, customResult, aiAnalysis]);
+  
+  return Response.json(finalVerdict);
+}
+```
+
+## 🔧 API Endpoints
+
+### Analysis API
+```typescript
+POST /api/analyze
+Body: { content: string, url?: string }
+Response: {
+  verdict: 'TRUE' | 'FALSE' | 'MIXED' | 'UNVERIFIED',
+  confidence: number,
+  sources: string[],
+  analysis: string
+}
+
+GET /api/analyze?id={analysisId}
+Response: Analysis results from database
+```
 
 ### Authentication
-- `POST /api/auth/signin` - User sign in
-- `POST /api/auth/signup` - User registration
-- `GET /api/auth/session` - Get current session
+```typescript
+/api/auth/[...nextauth]
+- NextAuth.js authentication endpoints
+- Supports multiple providers
+```
 
-### Reports
-- `GET /api/reports` - Get user's saved analyses
-- `POST /api/reports` - Report suspicious content
-- `GET /api/admin/reports` - Admin: View all reports
+## 🌟 Key Features Implemented
+
+### Analysis Engine
+- Multi-source fact-checking integration
+- AI-powered content analysis with Gemini
+- Real-time credibility scoring
+- Source verification and cross-referencing
+
+### User Interface
+- Modern glassmorphism design
+- Animated star background
+- Enhanced dropdown menus with color-coded options
+- Interactive navigation with hover effects
+- Responsive mobile-first design
+
+### Content Management
+- Save and organize analysis reports
+- Filter reports by verdict type
+- Sort by date and confidence scores
+- Export analysis results
 
 ## 🎨 Design System
 
-### Colors
-```css
-/* Primary Colors */
---primary-500: #06b6d4  /* Cyan */
---accent-500: #f97316   /* Orange */
---navy-900: #0f172a     /* Dark Navy */
+### Color Palette
+- **Background**: Deep navy (`#0a0a0a`)
+- **Primary Accent**: Cyan (`#06b6d4`)
+- **Secondary Accent**: Orange (`#f97316`)
+- **Glass Cards**: Semi-transparent with backdrop blur
 
-/* Utility Classes */
-.glass-card        /* Glassmorphism effect */
-.gradient-text     /* Gradient text effect */
-.neon-glow        /* Neon glow animation */
-```
+### Custom CSS Classes
+- `.glass-card` - Glassmorphism card styling
+- `.gradient-text` - Cyan to orange text gradients
+- `.neon-glow` - Glowing border effects
+- `.star-background` - Animated starfield background
 
-### Components
-- **Glass Cards**: Translucent cards with backdrop blur
-- **Gradient Buttons**: Primary and secondary action buttons
-- **Agent Workflow**: Real-time analysis step visualization
-- **Verdict Badges**: Color-coded truth indicators
+## 📱 Responsive Design
 
-## 🧪 Testing
+- **Desktop**: Full-featured interface with sidebar navigation
+- **Tablet**: Optimized layout with touch-friendly controls
+- **Mobile**: Streamlined experience with bottom navigation
 
-```bash
-# Run all tests
-npm run test
+## 🔒 Security Features
 
-# Run tests in watch mode
-npm run test:watch
+- Server-side content analysis
+- Secure API key management
+- Input sanitization and validation
+- Rate limiting on analysis endpoints
 
-# Run E2E tests
-npm run test:e2e
-```
+## 📊 Analytics & Reporting
+
+- Detailed analysis breakdowns
+- Confidence score visualization
+- Source attribution and linking
+- Historical analysis tracking
 
 ## 🚀 Deployment
 
 ### Vercel (Recommended)
-1. Connect your GitHub repository to Vercel
-2. Set environment variables in Vercel dashboard
-3. Deploy automatically on push
+```bash
+npm install -g vercel
+vercel
+```
 
 ### Docker
 ```bash
-# Build image
 docker build -t truetrace .
-
-# Run container
 docker run -p 3000:3000 truetrace
 ```
-
-### Manual Deployment
-```bash
-# Build for production
-npm run build
-
-# Start production server
-npm start
-```
-
-## 📝 Environment Variables
-
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `DATABASE_URL` | PostgreSQL connection string | ✅ |
-| `NEXTAUTH_SECRET` | NextAuth secret key | ✅ |
-| `NEXTAUTH_URL` | Application URL | ✅ |
-| `GOOGLE_CLIENT_ID` | Google OAuth client ID | ❌ |
-| `GOOGLE_CLIENT_SECRET` | Google OAuth secret | ❌ |
-| `REDIS_URL` | Redis connection string | ❌ |
-| `OPENAI_API_KEY` | OpenAI API key | ❌ |
-| `NEWS_API_KEY` | News API key | ❌ |
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## ⚠️ Disclaimer
-
-**Important**: This AI system is designed to assist in identifying potentially false information, but it is not infallible. All AI outputs should be verified with trusted sources before making important decisions. The system is intended as a tool to aid critical thinking, not replace human judgment.
-
-## 🎯 Hackathon Highlights
-
-### For Judges: Why This Project Stands Out
-
-1. **Visual Impact**: Stunning glassmorphism UI with smooth animations
-2. **Technical Excellence**: Full-stack TypeScript with modern best practices
-3. **Real-World Application**: Addresses the critical issue of misinformation
-4. **Scalable Architecture**: Production-ready with proper authentication and admin features
-5. **User Experience**: Intuitive interface with real-time feedback
-6. **Innovation**: Agentic AI workflow visualization is unique and engaging
-
-### Demo Flow
-1. **Landing Page**: Eye-catching hero with stats and features
-2. **Analysis Input**: Multi-modal input options (URL/Text/File)
-3. **Real-Time Processing**: Watch AI agents work step-by-step
-4. **Results Display**: Beautiful verdict cards with confidence scores
-5. **Source Verification**: Detailed source analysis and credibility scores
-6. **Report Generation**: Comprehensive PDF reports with evidence
-
 ---
 
-Built with ❤️ for hackathon judges who appreciate both form and function.
+**TrueTrace** - Empowering users to navigate the information landscape with confidence through AI-powered fact-checking technology.

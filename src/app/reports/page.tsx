@@ -133,7 +133,7 @@ export default function ReportsPage() {
         </div>
         {/* Filters */}
         <div className="glass-card p-6 rounded-2xl mb-8">
-          <div className="flex flex-col lg:flex-row gap-4">
+          <div className="select-container">
             {/* Search */}
             <div className="flex-1 relative">
               <input
@@ -141,7 +141,7 @@ export default function ReportsPage() {
                 placeholder="Search reports..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 pl-12 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="modern-search w-full"
               />
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
             </div>
@@ -150,23 +150,23 @@ export default function ReportsPage() {
             <select
               value={selectedVerdict}
               onChange={(e) => setSelectedVerdict(e.target.value)}
-              className="bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className="modern-select"
             >
-              <option value="all">All Verdicts</option>
-              <option value="TRUE">Verified True</option>
-              <option value="FALSE">Likely False</option>
-              <option value="MIXED">Mixed Accuracy</option>
-              <option value="UNVERIFIED">Unverified</option>
+              <option value="all">✨ All Verdicts</option>
+              <option value="TRUE">✅ Verified True</option>
+              <option value="FALSE">❌ Likely False</option>
+              <option value="MIXED">⚠️ Mixed Accuracy</option>
+              <option value="UNVERIFIED">❓ Unverified</option>
             </select>
 
             {/* Sort */}
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as 'date' | 'confidence')}
-              className="bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className="modern-select"
             >
-              <option value="date">Sort by Date</option>
-              <option value="confidence">Sort by Confidence</option>
+              <option value="date">📅 Sort by Date</option>
+              <option value="confidence">🎯 Sort by Confidence</option>
             </select>
           </div>
         </div>
