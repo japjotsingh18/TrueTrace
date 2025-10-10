@@ -49,8 +49,8 @@ An AI-powered misinformation detection platform that helps users verify the cred
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/your-username/truetrace.git
-cd truetrace
+git clone https://github.com/japjotsingh18/TrueTrace.git
+cd TrueTrace
 ```
 
 2. **Install dependencies**

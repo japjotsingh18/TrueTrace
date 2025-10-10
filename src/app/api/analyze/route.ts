@@ -12,6 +12,7 @@ const analyzeSchema = z.object({
 })
 
 export async function POST(request: NextRequest) {
+  const startTime = Date.now() // Start timing the analysis
   try {
     const body = await request.json()
   let { input, inputType, fileName, fileSize } = analyzeSchema.parse(body)
@@ -28,11 +29,12 @@ export async function POST(request: NextRequest) {
       status: 'PENDING',
       input,
       inputType,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      startTime // Store start time for duration calculation
     }
 
     // Start analysis in background
-    performAnalysis(analysisId, input, inputType)
+    performAnalysis(analysisId, input, inputType, startTime)
 
     const response = {
       analysisId,
@@ -121,7 +123,7 @@ function getStepDescription(stepId: string): string {
 }
 
 // Background analysis function
-async function performAnalysis(analysisId: string, input: string, inputType: string) {
+async function performAnalysis(analysisId: string, input: string, inputType: string, startTime: number) {
   try {
     console.log(`Starting analysis for ${analysisId}...`)
     
@@ -197,6 +199,9 @@ async function performAnalysis(analysisId: string, input: string, inputType: str
     const geminiEnd = Date.now();
     console.log(`[TIMING] Gemini analysis took ${geminiEnd - geminiStart}ms for`, analysisId)
 
+    // Calculate total analysis time
+    const totalAnalysisTime = (Date.now() - startTime) / 1000 // Convert to seconds
+
     // Mark all workflow steps as completed
     const completedSteps = analysisStore[analysisId].workflowSteps.map((step: any) => ({
       ...step,
@@ -216,6 +221,7 @@ async function performAnalysis(analysisId: string, input: string, inputType: str
       sources: analysisResult.sources || [],
       isInvalid: analysisResult.isInvalid || false,
       invalidReason: analysisResult.invalidReason || '',
+      analysisTime: Number(totalAnalysisTime.toFixed(1)), // Store real analysis time
       updatedAt: new Date().toISOString()
     }
 
@@ -224,6 +230,9 @@ async function performAnalysis(analysisId: string, input: string, inputType: str
     
   } catch (error) {
     console.error(`Analysis failed for ${analysisId}:`, error)
+    
+    // Calculate analysis time even for failed cases
+    const totalAnalysisTime = (Date.now() - startTime) / 1000
     
     // Mark current step as failed
     const failedSteps = (analysisStore[analysisId]?.workflowSteps || []).map((step: any) => {
@@ -243,6 +252,7 @@ async function performAnalysis(analysisId: string, input: string, inputType: str
       status: 'FAILED',
       workflowSteps: failedSteps,
       error: error instanceof Error ? error.message : 'Analysis failed',
+      analysisTime: Number(totalAnalysisTime.toFixed(1)), // Store timing even for failures
       updatedAt: new Date().toISOString()
     }
   }

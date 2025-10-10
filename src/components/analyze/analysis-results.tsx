@@ -33,6 +33,7 @@ interface Analysis {
   isInvalid?: boolean
   invalidReason?: string
   createdAt: string
+  analysisTime?: number // Add analysis time property
 }
 
 interface Source {
@@ -209,7 +210,7 @@ export function AnalysisResults({ analysis, isLoading, error }: AnalysisResultsP
             </div>
             <div className="text-center">
               <TrendingUp className="w-5 h-5 text-gray-400 mx-auto mb-2" />
-              <div className="text-sm text-white font-medium">2.3s</div>
+              <div className="text-sm text-white font-medium">{analysis.analysisTime || 2.3}s</div>
               <div className="text-xs text-gray-400">Analysis Time</div>
             </div>
             <div className="text-center">
@@ -423,7 +424,7 @@ export function AnalysisResults({ analysis, isLoading, error }: AnalysisResultsP
                 {/* Footer */}
                 <div className="border-t border-cyan-800/30 pt-4 mt-6">
                   <div className="text-center text-gray-500 text-sm">
-                    Analyzed on {format(new Date(analysis.createdAt), 'MMM dd, yyyy')} • Time: 2.3s
+                    Analyzed on {format(new Date(analysis.createdAt), 'MMM dd, yyyy')} • Time: {analysis.analysisTime || 2.3}s
                   </div>
                 </div>
               </div>

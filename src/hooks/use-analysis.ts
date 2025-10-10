@@ -10,6 +10,7 @@ interface Analysis {
   sources: any[]
   createdAt: string
   status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED'
+  analysisTime?: number // Add analysis time property
 }
 
 export function useAnalysis(analysisId: string | null) {
